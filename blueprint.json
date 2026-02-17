@@ -1,6 +1,6 @@
 {
 	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
-	"landingPage": "/?page_id=2",
+	"landingPage": "/pixel-art-demo/",
 	"preferredVersions": {
 		"wp": "latest",
 		"php": "8.4"
