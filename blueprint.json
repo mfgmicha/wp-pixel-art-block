@@ -1,8 +1,10 @@
 {
-  "landingPage": "/?page_id=2",
-  "preferredVersions": {
-    "wordpress": "latest"
-  },
+	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
+	"landingPage": "/?page_id=2",
+	"preferredVersions": {
+		"wp": "latest",
+		"php": "8.4"
+	},
   "steps": [
     {
       "step": "installPlugin",

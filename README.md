@@ -42,7 +42,7 @@ Pixel Art Block provides a intuitive interface for creating pixel art directly i
 
 Try the Pixel Art Block instantly in your browser without installing WordPress locally:
 
-**[Open in WordPress Playground](https://playground.wordpress.net/?blueprint=https://raw.githubusercontent.com/mfgmicha/wp-pixel-art-block/main/blueprint.json)**
+**[Open in WordPress Playground](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/mfgmicha/wp-pixel-art-block/main/blueprint.json)**
 
 This will:
 - Install the Pixel Art Block plugin
