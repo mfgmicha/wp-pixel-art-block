@@ -13,13 +13,14 @@
 		"lint:css": "wp-scripts lint-style",
 		"lint:js": "wp-scripts lint-js",
 		"packages-update": "wp-scripts packages-update",
-		"plugin-zip": "wp-scripts plugin-zip"
+		"plugin-zip": "wp-scripts plugin-zip",
+		"env": "wp-env start"
 	},
 	"dependencies": {
 		"@wordpress/scripts": "^30.0.0"
 	},
 	"devDependencies": {
-		"@wordpress/env": "^10.0.0"
+		"@wordpress/env": "^10.39.0"
 	},
 	"keywords": [
 		"wordpress",

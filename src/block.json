@@ -4,7 +4,7 @@
 	"name": "mfgmicha/pixel-art",
 	"version": "1.0.0",
 	"title": "Pixel Art",
-	"category": "common",
+	"category": "widgets",
 	"icon": "dashicons-art",
 	"description": "Create pixel art drawings with a customizable grid",
 	"supports": {
@@ -37,7 +37,7 @@
 			"default": true
 		}
 	},
-	"editorScript": "file:./build/index.js",
-	"editorStyle": "file:./build/index.css",
-	"style": "file:./build/style-index.css"
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css"
 }

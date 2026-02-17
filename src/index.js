@@ -8,6 +8,7 @@ import { registerBlockType } from '@wordpress/blocks';
  */
 import Edit from './edit';
 import Save from './save';
+import metadata from './block.json';
 import './index.css';
 
 /**
@@ -22,7 +23,7 @@ import './index.css';
  *
  * @since 1.0.0
  */
-registerBlockType( 'mfgmicha/pixel-art', {
+registerBlockType( metadata.name, {
 	edit: Edit,
 	save: Save,
 } );

@@ -18,10 +18,6 @@
       "pluginPath": "wp-pixel-art-block-main/pixel-art-block.php"
     },
     {
-      "step": "runPHP",
-      "code": "<?php require_once '/wordpress/wp-load.php'; var_dump(WP_Block_Type_Registry::get_instance()->get_all()); ?>"
-    },
-    {
       "step": "wp-cli",
       "command": "wp post create --post_type=page --post_title='Pixel Art Demo' --post_content='<!-- wp:mfgmicha/pixel-art {\"width\":16,\"height\":16} /-->' --post_status=publish"
     }

@@ -26,6 +26,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function mfgmicha_pixel_art_block_register_block() {
 	register_block_type( __DIR__ . '/build' );
+
+	//var_dump(WP_Block_Type_Registry::is_registered('mfgmicha/pixel-art'));
+
 }
 add_action( 'init', 'mfgmicha_pixel_art_block_register_block' );
 
