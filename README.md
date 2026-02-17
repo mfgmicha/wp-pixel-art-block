@@ -38,6 +38,17 @@ Pixel Art Block provides a intuitive interface for creating pixel art directly i
 5. Go to WordPress Admin > Plugins > Add New > Upload Plugin
 6. Upload the zip file and activate
 
+## Test on WordPress Playground
+
+Try the Pixel Art Block instantly in your browser without installing WordPress locally:
+
+**[Open in WordPress Playground](https://playground.wordpress.net/?blueprint=https://raw.githubusercontent.com/mfgmicha/wp-pixel-art-block/main/blueprint.json)**
+
+This will:
+- Install the Pixel Art Block plugin
+- Create a page with the Pixel Art block
+- Show the block on the frontend
+
 ## Usage
 
 1. In the WordPress block editor, search for "Pixel Art" in the block inserter

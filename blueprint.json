@@ -1,0 +1,23 @@
+{
+  "landingPage": "/?page_id=2",
+  "preferredVersions": {
+    "wordpress": "latest"
+  },
+  "steps": [
+    {
+      "step": "installPlugin",
+      "pluginData": {
+        "resource": "url",
+        "url": "https://github.com/mfgmicha/wp-pixel-art-block/archive/refs/heads/main.zip"
+      }
+    },
+    {
+      "step": "activatePlugin",
+      "pluginPath": "pixel-art-block/pixel-art-block.php"
+    },
+    {
+      "step": "wp-cli",
+      "command": "wp post create --post_type=page --post_title='Pixel Art Demo' --post_content='<!-- wp:mfgmicha/pixel-art {\"width\":16,\"height\":16} /-->' --post_status=publish"
+    }
+  ]
+}
