@@ -10,6 +10,7 @@ import Edit from './edit';
 import Save from './save';
 import metadata from './block.json';
 import './index.css';
+import './style-index.css';
 
 /**
  * Register the Pixel Art block.

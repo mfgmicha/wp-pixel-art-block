@@ -47,6 +47,7 @@ export default function PixelArtSave( { attributes } ) {
 			data-width={ width }
 			data-height={ height }
 			data-pixels={ JSON.stringify( pixels ) }
+			data-selected-color={ selectedColor }
 		>
 			<div className="pixel-art-grid" style={ gridStyle }>
 				{ pixelElements }

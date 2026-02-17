@@ -18,16 +18,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Register the Pixel Art block.
  *
- * Registers the block using the metadata loaded from the `block.json` file.
- * Behind the scenes, it registers also all assets so they can be enqueued
- * through the block editor in the corresponding context.
- *
  * @since 1.0.0
  */
 function mfgmicha_pixel_art_block_register_block() {
 	register_block_type( __DIR__ . '/build' );
-
-	//var_dump(WP_Block_Type_Registry::is_registered('mfgmicha/pixel-art'));
-
 }
 add_action( 'init', 'mfgmicha_pixel_art_block_register_block' );
