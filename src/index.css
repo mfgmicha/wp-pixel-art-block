@@ -1,0 +1,64 @@
+/**
+ * Editor styles for Pixel Art block
+ */
+
+.wp-block-mfgmicha-pixel-art {
+	padding: 16px;
+}
+
+.pixel-art-grid {
+	background-color: #e0e0e0;
+	border: 1px solid #e0e0e0;
+	margin: 0 auto;
+}
+
+.pixel-art-pixel {
+	position: relative;
+	transition: background-color 0.15s ease;
+}
+
+.pixel-art-pixel:hover {
+	opacity: 0.9;
+}
+
+.pixel-art-pixel.is-painted:hover {
+	opacity: 1;
+}
+
+.pixel-art-pixel.is-hovered {
+	background-color: #f0f0f0 !important;
+}
+
+.pixel-art-pixel:focus {
+	outline: 2px solid #007cba;
+	outline-offset: -2px;
+}
+
+.pixel-art-controls {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-top: 16px;
+}
+
+.pixel-art-clear-button,
+.pixel-art-export-button {
+	width: 100%;
+}
+
+.pixel-art-notice {
+	margin-top: 12px !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+	.pixel-art-grid {
+		max-width: 100%;
+	}
+
+	.pixel-art-pixel {
+		width: 100% !important;
+		height: auto !important;
+		aspect-ratio: 1;
+	}
+}

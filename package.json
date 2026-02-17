@@ -1,0 +1,35 @@
+{
+	"name": "pixel-art-block",
+	"version": "1.0.0",
+	"description": "WordPress Pixel Art Block Plugin",
+	"author": "MFGMicha",
+	"license": "GPL-2.0-or-later",
+	"main": "build/index.js",
+	"scripts": {
+		"build": "wp-scripts build",
+		"start": "wp-scripts start",
+		"check-licenses": "wp-scripts check-licenses",
+		"format": "wp-scripts format",
+		"lint:css": "wp-scripts lint-style",
+		"lint:js": "wp-scripts lint-js",
+		"packages-update": "wp-scripts packages-update",
+		"plugin-zip": "wp-scripts plugin-zip"
+	},
+	"dependencies": {
+		"@wordpress/scripts": "^30.0.0"
+	},
+	"devDependencies": {
+		"@wordpress/env": "^10.0.0"
+	},
+	"keywords": [
+		"wordpress",
+		"block",
+		"pixel-art",
+		"drawing",
+		"grid"
+	],
+	"engines": {
+		"node": ">=20.0.0",
+		"npm": ">=10.0.0"
+	}
+}

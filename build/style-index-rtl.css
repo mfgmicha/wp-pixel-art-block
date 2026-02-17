@@ -1,0 +1,1 @@
+.wp-block-mfgmicha-pixel-art{margin:0 auto;padding:0}.pixel-art-grid{background-color:#e0e0e0;border:1px solid #e0e0e0;margin:0 auto}.pixel-art-pixel{transition:background-color .15s ease}.pixel-art-pixel:not(.is-painted){background-color:#fff}@media (max-width:600px){.pixel-art-grid{max-width:100%}.pixel-art-pixel{aspect-ratio:1;height:auto!important;width:100%!important}}

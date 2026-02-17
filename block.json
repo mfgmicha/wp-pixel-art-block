@@ -1,0 +1,43 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "mfgmicha/pixel-art",
+	"version": "1.0.0",
+	"title": "Pixel Art",
+	"category": "common",
+	"icon": "dashicons-art",
+	"description": "Create pixel art drawings with a customizable grid",
+	"supports": {
+		"html": false,
+		"align": [ "wide", "full" ],
+		"customClassName": true
+	},
+	"attributes": {
+		"width": {
+			"type": "number",
+			"default": 16
+		},
+		"height": {
+			"type": "number",
+			"default": 16
+		},
+		"pixels": {
+			"type": "array",
+			"default": [],
+			"items": {
+				"type": "number"
+			}
+		},
+		"selectedColor": {
+			"type": "string",
+			"default": "#000000"
+		},
+		"showGrid": {
+			"type": "boolean",
+			"default": true
+		}
+	},
+	"editorScript": "file:./build/index.js",
+	"editorStyle": "file:./build/index.css",
+	"style": "file:./build/style-index.css"
+}

@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+
+# Build output
+# Note: build/ is NOT ignored to ensure the plugin is production-ready.
+# The compiled assets are included in version control for direct installation.
+# Uncomment line below only if you want to exclude build files:
+# build/
+
+# OS files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# OS specific
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# WP development
+wp-content/uploads/
+wp-content/cache/
+*.log
+
+# Package lock should be committed for dependencies
+# !package-lock.json
