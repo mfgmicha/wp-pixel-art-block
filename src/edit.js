@@ -9,7 +9,7 @@ import {
 	useEffect,
 	useRef,
 	useMemo,
-} from '@wordpress/elements';
+} from '@wordpress/element';
 import {
 	PanelBody,
 	RangeControl,
