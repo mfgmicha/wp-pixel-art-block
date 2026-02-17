@@ -14,16 +14,12 @@
       }
     },
     {
-      "step": "runPHP",
-      "code": "<?php require_once '/wordpress/wp-load.php'; var_dump(glob('/wordpress/wp-content/plugins/wp-pixel-art-block-main/*')); ?>"
-    },
-    {
       "step": "activatePlugin",
       "pluginPath": "wp-pixel-art-block-main/pixel-art-block.php"
     },
     {
       "step": "runPHP",
-      "code": "<?php require_once '/wordpress/wp-load.php'; var_dump(\WP_Block_Type_Registry::get_instance()->get_all()); ?>"
+      "code": "<?php require_once '/wordpress/wp-load.php'; var_dump(WP_Block_Type_Registry::get_instance()->get_all()); ?>"
     },
     {
       "step": "wp-cli",
