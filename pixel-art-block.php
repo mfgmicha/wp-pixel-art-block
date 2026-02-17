@@ -31,4 +31,3 @@ function mfgmicha_pixel_art_block_register_block() {
 
 }
 add_action( 'init', 'mfgmicha_pixel_art_block_register_block' );
-
