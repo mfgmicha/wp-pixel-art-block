@@ -108,7 +108,7 @@ export default function PixelArtEdit({ attributes, setAttributes }) {
             key={i}
             onClick={() => togglePixel(i)}
             style={{
-              width: '32px', height: '32px',
+              width: '44px', height: '44px',
               backgroundColor: pixels.includes(i) ? selectedColor : '#fff',
               border: showGrid ? '1px solid #e0e0e0' : 'none',
               cursor: 'pointer',
@@ -154,7 +154,7 @@ export default function PixelArtSave({ attributes }) {
             data-index={i}
             data-wp-on--click="actions.togglePixel"
             style={{
-              width: '32px', height: '32px',
+              width: '44px', height: '44px',
               backgroundColor: pixels.includes(i) ? selectedColor : '#fff',
               border: showGrid ? '1px solid #e0e0e0' : 'none',
             }}
@@ -236,14 +236,34 @@ test('pixel toggles on click', async ({ page }) => {
 
 ## 6. Styling
 
-Use WordPress CSS variables with fallbacks:
+### Approach: block.json + Directives
 
-```css
-.pixel-art-pixel {
-  background-color: var(--wp--preset--color--white, #fff);
-  border-color: var(--wp--preset--color--cyan, #c8d7e2);
-}
+Use both for optimal results:
+
+1. **block.json styles** - Base layout, colors, responsive
+2. **Directives** - Dynamic class toggling based on state
+
+In save.js, add directive:
+```jsx
+<div
+  className="pixel-art-pixel"
+  data-wp-class--is-painted="state.paintedPixels.includes(index)"
+  data-index={i}
+  data-wp-on--click="actions.togglePixel"
+  style={{
+    width: '44px', height: '44px',
+    backgroundColor: 'var(--wp--preset--color--white, #fff)',
+  }}
+/>
 ```
+
+In CSS:
+```css
+.pixel-art-pixel { background-color: #fff; }
+.pixel-art-pixel.is-painted { background-color: var(--selected-color); }
+```
+
+This keeps JSX clean and leverages CSS for styling.
 
 ---
 
