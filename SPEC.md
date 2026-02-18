@@ -1,231 +1,310 @@
-# Pixel Art Block - Frontend React Conversion
+# Pixel Art Block - Technical Specification
 
-## Overview
-
-Convert the frontend interactivity from plain JavaScript to React for better maintainability and extensibility.
-
-## Current State
-
-### Files
-- `src/edit.js` - Editor placeholder (working)
-- `src/save.js` - Outputs interactive grid HTML (will change)
-- `src/view.js` - Plain JS for frontend interactivity (will convert to React)
-- `src/block.json` - Block configuration
-
-### Current Functionality
-- **Editor**: Simple placeholder "Pixel Art Block"
-- **Frontend**: Interactive 16x16 grid, click to toggle pixels, color from data attribute
+> WordPress Gutenberg block for creating pixel art with TDD and Interactivity API
 
 ---
 
-## Target State
+## 1. Overview
 
-### Architecture
-- **Editor (save.js)**: Simple placeholder div for React to mount into
-- **Frontend (view.js)**: React component for interactive grid
+**Goal**: Interactive 16x16 pixel art grid in Gutenberg editor and frontend.
 
-### MVP Functionality (Same as Current)
-- 16x16 grid (configurable via block attributes later)
-- Click pixel to toggle painted state
-- Color from block attributes
-- No persistence (lost on refresh)
+### Requirements
 
-Future enhancements below the TODO list.
+| Feature | Description |
+|---------|-------------|
+| Grid | 16x16 (configurable), paint/erase toggle |
+| Colors | Default #000000, user-selectable |
+| Output | Block attributes for persistence |
+
+### Block Attributes
+
+| Attribute | Type | Default |
+|-----------|------|---------|
+| `width` | number | 16 |
+| `height` | number | 16 |
+| `pixels` | array | [] |
+| `selectedColor` | string | '#000000' |
+| `showGrid` | boolean | true |
 
 ---
 
-## Implementation Plan
+## 2. Architecture
 
-### Step 1: Update save.js
-Replace grid HTML output with simple placeholder div.
+### Data Flow
 
-**File:** `src/save.js`
-```js
-import { createElement } from '@wordpress/element';
+```
+User Action → Editor (React) → setAttributes() → Save (HTML data-attrs) → Frontend (Interactivity API)
+```
 
-export default function Save() {
-    return (
-        <div className="wp-block-mfgmicha-pixel-art">
-        </div>
-    );
+### Technology
+
+- **Editor**: React via @wordpress/scripts
+- **Frontend**: WordPress Interactivity API
+- **Styling**: CSS custom properties with fallbacks
+- **Testing**: Playwright (E2E)
+
+---
+
+## 3. Implementation
+
+### 3.1 block.json
+
+```json
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "mfgmicha/pixel-art",
+  "version": "2.0.0",
+  "title": "Pixel Art",
+  "category": "widgets",
+  "icon": "dashicons-art",
+  "description": "Create pixel art drawings",
+  "supports": {
+    "html": false,
+    "align": ["wide", "full"]
+  },
+  "attributes": {
+    "width": { "type": "number", "default": 16 },
+    "height": { "type": "number", "default": 16 },
+    "pixels": { "type": "array", "default": [] },
+    "selectedColor": { "type": "string", "default": "#000000" },
+    "showGrid": { "type": "boolean", "default": true }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "viewScript": "file:./view.js"
 }
 ```
 
-### Step 2: Update block.json
-Ensure viewScript can load React dependencies.
+### 3.2 Editor (edit.js)
 
-**File:** `src/block.json`
-- May need to add `wp-element` as dependency for viewScript
+```javascript
+import { useBlockProps } from '@wordpress/block-editor';
+import { useState } from '@wordpress/element';
 
-### Step 3: Convert view.js to React
-Create React component for frontend.
+export default function PixelArtEdit({ attributes, setAttributes }) {
+  const { width, height, pixels, selectedColor, showGrid } = attributes;
+  const [tool, setTool] = useState('paint'); // 'paint' | 'erase'
 
-**MVP approach using plain JS inside the event listener:**
-```js
-import { createElement } from '@wordpress/element';
+  const togglePixel = (index) => {
+    const newPixels = [...pixels];
+    const idx = newPixels.indexOf(index);
+    tool === 'paint' 
+      ? idx === -1 && newPixels.push(index)
+      : idx !== -1 && newPixels.splice(idx, 1);
+    setAttributes({ pixels: newPixels });
+  };
 
-document.addEventListener('DOMContentLoaded', () => {
-    const container = document.querySelector('.wp-block-mfgmicha-pixel-art');
-    if (!container) return;
-    
-    // Get attributes from container data attributes
-    const width = parseInt(container.dataset.width || '16', 10);
-    const height = parseInt(container.dataset.height || '16', 10);
-    const selectedColor = container.dataset.selectedColor || '#000000';
-    const showGrid = container.dataset.showGrid !== 'false';
-    
-    // State for painted pixels
-    let paintedPixels = new Set();
-    
-    // Render grid
-    function render() {
-        container.innerHTML = '';
-        
-        const grid = document.createElement('div');
-        grid.className = 'pixel-art-grid';
-        grid.style.display = 'grid';
-        grid.style.gridTemplateColumns = `repeat(${width}, 1fr)`;
-        grid.style.gap = showGrid ? '1px' : '0';
-        grid.style.width = '100%';
-        grid.style.maxWidth = `${width * 44}px`;
-        
-        for (let i = 0; i < width * height; i++) {
-            const pixel = document.createElement('div');
-            pixel.className = 'pixel-art-pixel';
-            pixel.style.width = '44px';
-            pixel.style.height = '44px';
-            pixel.style.cursor = 'pointer';
-            
-            if (paintedPixels.has(i)) {
-                pixel.style.backgroundColor = selectedColor;
-            } else {
-                pixel.style.backgroundColor = '#ffffff';
-            }
-            
-            if (showGrid) {
-                pixel.style.border = '1px solid #e0e0e0';
-            }
-            
-            pixel.addEventListener('click', () => {
-                if (paintedPixels.has(i)) {
-                    paintedPixels.delete(i);
-                    pixel.style.backgroundColor = '#ffffff';
-                } else {
-                    paintedPixels.add(i);
-                    pixel.style.backgroundColor = selectedColor;
-                }
-            });
-            
-            grid.appendChild(pixel);
-        }
-        
-        container.appendChild(grid);
-    }
-    
-    render();
-});
+  return (
+    <div {...useBlockProps()}>
+      <div className="pixel-art-grid" style={{
+        display: 'grid',
+        gridTemplateColumns: `repeat(${width}, 1fr)`,
+        gap: showGrid ? '1px' : '0',
+      }}>
+        {Array.from({ length: width * height }, (_, i) => (
+          <div
+            key={i}
+            onClick={() => togglePixel(i)}
+            style={{
+              width: '32px', height: '32px',
+              backgroundColor: pixels.includes(i) ? selectedColor : '#fff',
+              border: showGrid ? '1px solid #e0e0e0' : 'none',
+              cursor: 'pointer',
+            }}
+          />
+        ))}
+      </div>
+      <div className="controls">
+        <input type="color" value={selectedColor}
+          onChange={e => setAttributes({ selectedColor: e.target.value })} />
+        <button onClick={() => setTool('paint')}>Paint</button>
+        <button onClick={() => setTool('erase')}>Erase</button        <button onClick={() => setAttributes({ pixels: [] })}>Clear</button>
+      </div>
+    </div>
+  );
+}
 ```
 
-**Note:** Using plain JS inside the event listener for initial MVP. Can fully convert to React later.
+### 3.3 Save (save.js)
 
-### Step 4: Rebuild
-```bash
-npm run build
+```javascript
+export default function PixelArtSave({ attributes }) {
+  const { width, height, pixels, selectedColor, showGrid } = attributes;
+
+  return (
+    <div
+      className="wp-block-mfgmicha-pixel-art"
+      data-width={width}
+      data-height={height}
+      data-pixels={JSON.stringify(pixels)}
+      data-selected-color={selectedColor}
+      data-show-grid={showGrid}
+      data-wp-interactive="pixel-art"
+    >
+      <div className="pixel-art-grid" style={{
+        display: 'grid',
+        gridTemplateColumns: `repeat(${width}, 1fr)`,
+        gap: showGrid ? '1px' : '0',
+      }}>
+        {Array.from({ length: width * height }, (_, i) => (
+          <div
+            key={i}
+            data-index={i}
+            data-wp-on--click="actions.togglePixel"
+            style={{
+              width: '32px', height: '32px',
+              backgroundColor: pixels.includes(i) ? selectedColor : '#fff',
+              border: showGrid ? '1px solid #e0e0e0' : 'none',
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
 ```
 
-### Step 5: Test
-- Editor: Block should show placeholder, be clickable, show description in sidebar
-- Frontend: Grid should render, pixels clickable and toggle color
+### 3.4 Frontend (view.js)
 
----
+```javascript
+import { registerBlock } from '@wordpress/interactivity';
 
-## Notes
-
-- WordPress automatically loads `wp-element` for viewScript when specified in block.json
-- save.js returns HTML that view.js then hydrates/interacts with
-- No persistence - pixel state is lost on page refresh
-
----
-
-## Alternative: Full React Approach
-
-If we want to use React fully for view.js (instead of plain JS wrapper):
-
-```js
-import { createElement, useState } from '@wordpress/element';
-
-document.addEventListener('DOMContentLoaded', () => {
-    const blocks = document.querySelectorAll('.wp-block-mfgmicha-pixel-art');
-    
-    blocks.forEach(block => {
-        const width = parseInt(block.dataset.width || '16', 10);
-        const height = parseInt(block.dataset.height || '16', 10);
-        const selectedColor = block.dataset.selectedColor || '#000000';
-        const showGrid = block.dataset.showGrid !== 'false';
-        
-        function PixelGrid() {
-            const [painted, setPainted] = useState(new Set());
-            
-            function togglePixel(index) {
-                const newSet = new Set(painted);
-                if (newSet.has(index)) {
-                    newSet.delete(index);
-                } else {
-                    newSet.add(index);
-                }
-                setPainted(newSet);
-            }
-            
-            const pixels = [];
-            for (let i = 0; i < width * height; i++) {
-                const isPainted = painted.has(i);
-                pixels.push(
-                    createElement('div', {
-                        key: i,
-                        className: 'pixel-art-pixel',
-                        style: {
-                            width: '44px',
-                            height: '44px',
-                            backgroundColor: isPainted ? selectedColor : '#ffffff',
-                            border: showGrid ? '1px solid #e0e0e0' : 'none',
-                            cursor: 'pointer'
-                        },
-                        onClick: () => togglePixel(i)
-                    })
-                );
-            }
-            
-            return createElement('div', {
-                className: 'pixel-art-grid',
-                style: {
-                    display: 'grid',
-                    gridTemplateColumns: `repeat(${width}, 1fr)`,
-                    gap: showGrid ? '1px' : '0',
-                    width: '100%',
-                    maxWidth: `${width * 44}px`
-                }
-            }, pixels);
-        }
-        
-        // Render with React
-        // Note: This requires React to be loaded separately
-    });
+registerBlock('mfgmicha/pixel-art', {
+  state: { paintedPixels: [] },
+  actions: {
+    togglePixel: (ctx, e) => {
+      const idx = parseInt(e.target.dataset.index, 10);
+      const arr = ctx.state.paintedPixels;
+      ctx.state.paintedPixels = arr.includes(idx)
+        ? arr.filter(i => i !== idx)
+        : [...arr, idx];
+    },
+  },
 });
 ```
 
 ---
 
-## Todo List
+## 4. TDD Workflow
 
-- [ ] Update save.js to return placeholder div
-- [ ] Update block.json if needed for viewScript dependencies
-- [ ] Convert view.js to React
-- [ ] Rebuild plugin
-- [ ] Test editor (placeholder, selectable, sidebar description)
-- [ ] Test frontend (grid renders, pixels clickable)
+### Test-First Steps
 
-### Future Possibilities
-- Save grid size to block attributes
-- Save pixel data (better approach than block markup)
-- Color picker (maybe start with a few predefined colors)
-- Grid size controls (in admin as sidebar panel plugin for ther block)
+1. Write failing Playwright test
+2. Run test → verify failure
+3. Implement minimum code
+4. Run test → verify pass
+5. Refactor
+
+### Example Test (tests/block.spec.js)
+
+```javascript
+import { test, expect } from '@playwright/test';
+
+test('block renders in editor', async ({ page }) => {
+  await page.goto('/wp-admin/post-new.php');
+  await page.click('button[aria-label="Add block"]');
+  await page.fill('input[placeholder="Search"]', 'Pixel Art');
+  await page.click('button:has-text("Pixel Art")');
+  await expect(page.locator('.pixel-art-grid')).toBeVisible();
+});
+
+test('pixel toggles on click', async ({ page }) => {
+  // Setup: insert block
+  const pixel = page.locator('.pixel-art-pixel').first();
+  await expect(pixel).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+  await pixel.click();
+  await expect(pixel).toHaveCSS('background-color', 'rgb(0, 0, 0)');
+});
+```
+
+---
+
+## 5. Implementation Tasks
+
+| Step | Task | Test |
+|------|------|------|
+| 1 | Update block.json | Verify block registers |
+| 2 | Implement edit.js | Grid renders, clicks work |
+| 3 | Implement save.js | Data attrs present |
+| 4 | Implement view.js | Frontend toggle works |
+| 5 | Add styles | Visual consistency |
+| 6 | Run full tests | All pass |
+
+---
+
+## 6. Styling
+
+Use WordPress CSS variables with fallbacks:
+
+```css
+.pixel-art-pixel {
+  background-color: var(--wp--preset--color--white, #fff);
+  border-color: var(--wp--preset--color--cyan, #c8d7e2);
+}
+```
+
+---
+
+## 7. Storage Architectures
+
+### Requirement
+
+Editor configures block → Visitors draw on frontend → Multiple drawings per post from different users.
+
+### Option A: Post Meta + User Hash (Recommended)
+
+Store all drawings in single post meta as JSON:
+
+```json
+{
+  "user_hash_1": { "pixels": [0,5,10], "color": "#ff0000", "timestamp": 1234567890 },
+  "user_hash_2": { "pixels": [1,2,3], "color": "#00ff00", "timestamp": 1234567891 }
+}
+```
+
+- **User ID**: Cookie-generated hash (e.g., `pixel_user_abc123`)
+- **Storage**: Existing `wp_postmeta` table
+- **Pros**: No new tables, WordPress handles it
+- **Cons**: Meta can grow (mitigate: per-user limits)
+
+### Option B: Custom Table
+
+```sql
+CREATE TABLE wp_pixel_art_drawings (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  post_id BIGINT NOT NULL,
+  user_hash VARCHAR(32) NOT NULL,
+  pixels JSON NOT NULL,
+  color VARCHAR(7) DEFAULT '#000000',
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_post (post_id),
+  INDEX idx_user (post_id, user_hash)
+);
+```
+
+- **Pros**: Scalable, proper schema
+- **Cons**: Requires plugin activation hooks, more complex
+
+### Option C: localStorage + URL Share
+
+- Drawings in browser localStorage
+- Share via URL: `?d=base64pixels`
+- **Pros**: Zero server changes
+- **Cons**: No collaborative drawing
+
+### Option D: Hybrid
+
+- Default: localStorage for personal drawing
+- "Save" button sends to server
+- Admin sees submissions in editor
+- **Pros**: Simple, opt-in persistence
+
+---
+
+## 8. Known Issues
+
+- `@wordpress/element` does NOT export `useState` - use Interactivity API instead
+- `viewScript` does not auto-load dependencies - Interactivity API needs none
+- JSON.parse can fail - always wrap in try/catch
