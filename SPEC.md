@@ -109,8 +109,12 @@ export default function PixelArtEdit({ attributes, setAttributes }) {
             onClick={() => togglePixel(i)}
             style={{
               width: '44px', height: '44px',
-              backgroundColor: pixels.includes(i) ? selectedColor : '#fff',
-              border: showGrid ? '1px solid #e0e0e0' : 'none',
+              backgroundColor: pixels.includes(i) 
+                ? selectedColor 
+                : 'var(--wp--preset--color--white, #fff)',
+              border: showGrid 
+                ? '1px solid var(--wp--preset--color--cyan, #c8d7e2)' 
+                : 'none',
               cursor: 'pointer',
             }}
           />
@@ -120,7 +124,8 @@ export default function PixelArtEdit({ attributes, setAttributes }) {
         <input type="color" value={selectedColor}
           onChange={e => setAttributes({ selectedColor: e.target.value })} />
         <button onClick={() => setTool('paint')}>Paint</button>
-        <button onClick={() => setTool('erase')}>Erase</button        <button onClick={() => setAttributes({ pixels: [] })}>Clear</button>
+        <button onClick={() => setTool('erase')}>Erase</button>
+        <button onClick={() => setAttributes({ pixels: [] })}>Clear</button>
       </div>
     </div>
   );
@@ -155,8 +160,12 @@ export default function PixelArtSave({ attributes }) {
             data-wp-on--click="actions.togglePixel"
             style={{
               width: '44px', height: '44px',
-              backgroundColor: pixels.includes(i) ? selectedColor : '#fff',
-              border: showGrid ? '1px solid #e0e0e0' : 'none',
+              backgroundColor: pixels.includes(i) 
+                ? selectedColor 
+                : 'var(--wp--preset--color--white, #fff)',
+              border: showGrid 
+                ? '1px solid var(--wp--preset--color--cyan, #c8d7e2)' 
+                : 'none',
             }}
           />
         ))}
@@ -259,7 +268,7 @@ In save.js, add directive:
 
 In CSS:
 ```css
-.pixel-art-pixel { background-color: #fff; }
+.pixel-art-pixel { background-color: var(--wp--preset--color--white, #fff); }
 .pixel-art-pixel.is-painted { background-color: var(--selected-color); }
 ```
 
