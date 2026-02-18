@@ -30,11 +30,7 @@ Convert the frontend interactivity from plain JavaScript to React for better mai
 - Color from block attributes
 - No persistence (lost on refresh)
 
-### Future Possibilities
-- Save grid size to block attributes
-- Save pixel data to block markup
-- Color picker
-- Grid size controls
+Future enhancements below the TODO list.
 
 ---
 
@@ -217,15 +213,19 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 ```
 
-This requires additional setup to load React on the frontend, which adds complexity. Recommended to start with the simpler plain JS approach.
-
 ---
 
 ## Todo List
 
 - [ ] Update save.js to return placeholder div
 - [ ] Update block.json if needed for viewScript dependencies
-- [ ] Convert view.js to React (or plain JS approach)
+- [ ] Convert view.js to React
 - [ ] Rebuild plugin
 - [ ] Test editor (placeholder, selectable, sidebar description)
 - [ ] Test frontend (grid renders, pixels clickable)
+
+### Future Possibilities
+- Save grid size to block attributes
+- Save pixel data (better approach than block markup)
+- Color picker (maybe start with a few predefined colors)
+- Grid size controls (in admin as sidebar panel plugin for ther block)
