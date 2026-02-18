@@ -41,3 +41,5 @@ wp-content/cache/
 
 # Package lock should be committed for dependencies
 # !package-lock.json
+/playwright-report
+/test-results

@@ -13,7 +13,9 @@
 		"lint:css": "wp-scripts lint-style",
 		"lint:js": "wp-scripts lint-js",
 		"packages-update": "wp-scripts packages-update",
-		"plugin-zip": "wp-scripts plugin-zip"
+		"plugin-zip": "wp-scripts plugin-zip",
+		"test:server": "npx @wp-playground/cli server --port=8889 --mount=\"$(pwd):/wordpress/wp-content/plugins/pixel-art-block\"",
+		"test": "npx playwright test"
 	},
 	"dependencies": {
 		"@wordpress/scripts": "^30.0.0"
@@ -28,5 +30,8 @@
 	"engines": {
 		"node": ">=20.0.0",
 		"npm": ">=10.0.0"
+	},
+	"devDependencies": {
+		"@playwright/test": "^1.58.2"
 	}
 }
