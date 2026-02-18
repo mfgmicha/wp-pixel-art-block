@@ -1,47 +1,32 @@
 # Pixel Art Block - Technical Specification
 
-> WordPress Gutenberg block for creating pixel art with TDD and Interactivity API
+> WordPress Gutenberg block with WordPress Interactivity API and TDD
 
 ---
 
 ## 1. Overview
 
-**Goal**: Interactive 16x16 pixel art grid in Gutenberg editor and frontend.
-
-### Requirements
-
-| Feature | Description |
-|---------|-------------|
-| Grid | 16x16 (configurable), paint/erase toggle |
-| Colors | Default #000000, user-selectable |
-| Output | Block attributes for persistence |
+Interactive 16x16 pixel art grid where editors configure in Gutenberg, visitors draw on frontend.
 
 ### Block Attributes
 
-| Attribute | Type | Default |
-|-----------|------|---------|
-| `width` | number | 16 |
-| `height` | number | 16 |
-| `pixels` | array | [] |
-| `selectedColor` | string | '#000000' |
-| `showGrid` | boolean | true |
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `width` | number | 16 | Grid columns |
+| `height` | number | 16 | Grid rows |
+| `pixels` | array | [] | Painted pixel indices |
+| `selectedColor` | string | '#000000' | Paint color |
+| `showGrid` | boolean | true | Show grid lines |
 
 ---
 
 ## 2. Architecture
 
-### Data Flow
-
 ```
-User Action → Editor (React) → setAttributes() → Save (HTML data-attrs) → Frontend (Interactivity API)
+Editor (React) → setAttributes() → Save (HTML data-*) → Frontend (Interactivity API)
 ```
 
-### Technology
-
-- **Editor**: React via @wordpress/scripts
-- **Frontend**: WordPress Interactivity API
-- **Styling**: CSS custom properties with fallbacks
-- **Testing**: Playwright (E2E)
+**Tech Stack**: React (@wordpress/scripts), WordPress Interactivity API, Playwright
 
 ---
 
@@ -59,10 +44,7 @@ User Action → Editor (React) → setAttributes() → Save (HTML data-attrs) �
   "category": "widgets",
   "icon": "dashicons-art",
   "description": "Create pixel art drawings",
-  "supports": {
-    "html": false,
-    "align": ["wide", "full"]
-  },
+  "supports": { "html": false, "align": ["wide", "full"] },
   "attributes": {
     "width": { "type": "number", "default": 16 },
     "height": { "type": "number", "default": 16 },
@@ -88,12 +70,10 @@ export default function PixelArtEdit({ attributes, setAttributes }) {
   const [tool, setTool] = useState('paint'); // 'paint' | 'erase'
 
   const togglePixel = (index) => {
-    const newPixels = [...pixels];
-    const idx = newPixels.indexOf(index);
-    tool === 'paint' 
-      ? idx === -1 && newPixels.push(index)
-      : idx !== -1 && newPixels.splice(idx, 1);
-    setAttributes({ pixels: newPixels });
+    const arr = [...pixels];
+    const i = arr.indexOf(index);
+    tool === 'paint' ? (i === -1 && arr.push(index)) : (i !== -1 && arr.splice(i, 1));
+    setAttributes({ pixels: arr });
   };
 
   return (
@@ -104,17 +84,12 @@ export default function PixelArtEdit({ attributes, setAttributes }) {
         gap: showGrid ? '1px' : '0',
       }}>
         {Array.from({ length: width * height }, (_, i) => (
-          <div
-            key={i}
-            onClick={() => togglePixel(i)}
+          <div key={i} onClick={() => togglePixel(i)}
+            className={`pixel-art-pixel ${pixels.includes(i) ? 'is-painted' : ''}`}
             style={{
               width: '44px', height: '44px',
-              backgroundColor: pixels.includes(i) 
-                ? selectedColor 
-                : 'var(--wp--preset--color--white, #fff)',
-              border: showGrid 
-                ? '1px solid var(--wp--preset--color--cyan, #c8d7e2)' 
-                : 'none',
+              backgroundColor: pixels.includes(i) ? selectedColor : 'var(--wp--preset--color--white, #fff)',
+              border: showGrid ? '1px solid var(--wp--preset--color--cyan, #c8d7e2)' : 'none',
               cursor: 'pointer',
             }}
           />
@@ -139,10 +114,8 @@ export default function PixelArtSave({ attributes }) {
   const { width, height, pixels, selectedColor, showGrid } = attributes;
 
   return (
-    <div
-      className="wp-block-mfgmicha-pixel-art"
-      data-width={width}
-      data-height={height}
+    <div className="wp-block-mfgmicha-pixel-art"
+      data-width={width} data-height={height}
       data-pixels={JSON.stringify(pixels)}
       data-selected-color={selectedColor}
       data-show-grid={showGrid}
@@ -154,19 +127,10 @@ export default function PixelArtSave({ attributes }) {
         gap: showGrid ? '1px' : '0',
       }}>
         {Array.from({ length: width * height }, (_, i) => (
-          <div
-            key={i}
-            data-index={i}
+          <div key={i} data-index={i}
+            className={`pixel-art-pixel ${pixels.includes(i) ? 'is-painted' : ''}`}
             data-wp-on--click="actions.togglePixel"
-            style={{
-              width: '44px', height: '44px',
-              backgroundColor: pixels.includes(i) 
-                ? selectedColor 
-                : 'var(--wp--preset--color--white, #fff)',
-              border: showGrid 
-                ? '1px solid var(--wp--preset--color--cyan, #c8d7e2)' 
-                : 'none',
-            }}
+            data-wp-class--is-painted="state.paintedPixels.includes(parseInt(dataset.index))"
           />
         ))}
       </div>
@@ -183,6 +147,12 @@ import { registerBlock } from '@wordpress/interactivity';
 registerBlock('mfgmicha/pixel-art', {
   state: { paintedPixels: [] },
   actions: {
+    init: (ctx) => {
+      const el = ctx.element;
+      try {
+        ctx.state.paintedPixels = JSON.parse(el.dataset.pixels || '[]');
+      } catch (e) { ctx.state.paintedPixels = []; }
+    },
     togglePixel: (ctx, e) => {
       const idx = parseInt(e.target.dataset.index, 10);
       const arr = ctx.state.paintedPixels;
@@ -191,93 +161,69 @@ registerBlock('mfgmicha/pixel-art', {
         : [...arr, idx];
     },
   },
+  callbacks: {
+    initOnLoad: (_, ctx) => ctx.actions.init(ctx),
+  },
 });
 ```
 
 ---
 
-## 4. TDD Workflow
+## 4. Styling (style-index.css)
 
-### Test-First Steps
+```css
+.pixel-art-grid {
+  display: grid;
+  gap: 1px;
+  background: var(--wp--preset--color--cyan, #c8d7e2);
+}
+.pixel-art-pixel {
+  width: 44px; height: 44px;
+  background: var(--wp--preset--color--white, #fff);
+  cursor: pointer;
+}
+.pixel-art-pixel.is-painted {
+  background: var(--selected-color, #000);
+}
+```
+
+---
+
+## 5. TDD Workflow
 
 1. Write failing Playwright test
-2. Run test → verify failure
+2. Run → verify failure
 3. Implement minimum code
-4. Run test → verify pass
+4. Run → verify pass
 5. Refactor
 
-### Example Test (tests/block.spec.js)
+### Test Example
 
 ```javascript
-import { test, expect } from '@playwright/test';
-
-test('block renders in editor', async ({ page }) => {
-  await page.goto('/wp-admin/post-new.php');
-  await page.click('button[aria-label="Add block"]');
-  await page.fill('input[placeholder="Search"]', 'Pixel Art');
-  await page.click('button:has-text("Pixel Art")');
-  await expect(page.locator('.pixel-art-grid')).toBeVisible();
-});
-
 test('pixel toggles on click', async ({ page }) => {
-  // Setup: insert block
   const pixel = page.locator('.pixel-art-pixel').first();
-  await expect(pixel).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+  await expect(pixel).not.toHaveClass(/is-painted/);
   await pixel.click();
-  await expect(pixel).toHaveCSS('background-color', 'rgb(0, 0, 0)');
+  await expect(pixel).toHaveClass(/is-painted/);
 });
 ```
 
 ---
 
-## 5. Implementation Tasks
+## 6. Implementation Tasks
 
-| Step | Task | Test |
-|------|------|------|
-| 1 | Update block.json | Verify block registers |
-| 2 | Implement edit.js | Grid renders, clicks work |
-| 3 | Implement save.js | Data attrs present |
-| 4 | Implement view.js | Frontend toggle works |
-| 5 | Add styles | Visual consistency |
-| 6 | Run full tests | All pass |
-
----
-
-## 6. Styling
-
-### Approach: block.json + Directives
-
-Use both for optimal results:
-
-1. **block.json styles** - Base layout, colors, responsive
-2. **Directives** - Dynamic class toggling based on state
-
-In save.js, add directive:
-```jsx
-<div
-  className="pixel-art-pixel"
-  data-wp-class--is-painted="state.paintedPixels.includes(index)"
-  data-index={i}
-  data-wp-on--click="actions.togglePixel"
-  style={{
-    width: '44px', height: '44px',
-    backgroundColor: 'var(--wp--preset--color--white, #fff)',
-  }}
-/>
-```
-
-In CSS:
-```css
-.pixel-art-pixel { background-color: var(--wp--preset--color--white, #fff); }
-.pixel-art-pixel.is-painted { background-color: var(--selected-color); }
-```
-
-This keeps JSX clean and leverages CSS for styling.
+| Step | Task |
+|------|------|
+| 1 | Update block.json |
+| 2 | Implement edit.js |
+| 3 | Implement save.js |
+| 4 | Implement view.js |
+| 5 | Add CSS |
+| 6 | Run tests |
 
 ---
 
 ## 7. Known Issues
 
-- `@wordpress/element` exports hooks in modern WordPress - Interactivity API still recommended for frontend
-- `viewScript` does not auto-load dependencies - Interactivity API needs none
-- JSON.parse can fail - always wrap in try/catch
+- `JSON.parse` can fail - always wrap in try/catch
+- Interactivity API state requires `data-wp-class--*` directive for CSS class toggling
