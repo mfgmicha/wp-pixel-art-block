@@ -1,15 +1,14 @@
 # Pixel Art Creator
 
-Author:            Micha Krapp
-Tags:              block, pixel-art, interactive, creative, grid
-Tested up to:      6.8
-Stable tag:        0.3.0
-Requires at least: 6.7
-Requires PHP:      8.2
-License:           GPLv2 or later
-License URI:       https://www.gnu.org/licenses/gpl-2.0.html
-
 An interactive pixel art creator block for WordPress. Visitors can paint pixel art directly on your site using a configurable grid and your theme's color palette.
+
+- **Author:** Micha Krapp
+- **Version:** 0.3.0
+- **Requires at least:** WordPress 6.7
+- **Requires PHP:** 8.2
+- **Tested up to:** WordPress 6.8
+- **License:** [GPLv2 or later](https://www.gnu.org/licenses/gpl-2.0.html)
+- **Tags:** block, pixel-art, interactive, creative, grid
 
 ## Description
 
