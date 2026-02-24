@@ -1,15 +1,162 @@
-/**
- * WordPress dependencies
- */
-import { useBlockProps } from '@wordpress/block-editor';
+import { __ } from '@wordpress/i18n';
+import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
+import { PanelBody, RangeControl } from '@wordpress/components';
+import './editor.scss';
 
-/**
- * Pixel Art Block Edit Component
- *
- * Simple placeholder - the interactive block is on the frontend.
- */
-export default function PixelArtEdit() {
+export default function Edit( { attributes, setAttributes } ) {
+	const { columns, rows } = attributes;
+	const blockProps = useBlockProps();
+
+	const previewCells = [];
+	const totalCells = Math.min( columns, 12 ) * Math.min( rows, 12 );
+	for ( let i = 0; i < totalCells; i++ ) {
+		previewCells.push( i );
+	}
+
+	const previewCols = Math.min( columns, 12 );
+	const previewRows = Math.min( rows, 12 );
+
 	return (
-		<p { ...useBlockProps() }>Pixel Art Block</p>
+		<>
+			<InspectorControls>
+				<PanelBody title={ __( 'Grid Settings', 'telex-pixel-art' ) }>
+					<RangeControl
+						label={ __( 'Columns', 'telex-pixel-art' ) }
+						value={ columns }
+						onChange={ ( value ) =>
+							setAttributes( { columns: value } )
+						}
+						min={ 4 }
+						max={ 32 }
+					/>
+					<RangeControl
+						label={ __( 'Rows', 'telex-pixel-art' ) }
+						value={ rows }
+						onChange={ ( value ) =>
+							setAttributes( { rows: value } )
+						}
+						min={ 4 }
+						max={ 32 }
+					/>
+				</PanelBody>
+			</InspectorControls>
+			<div { ...blockProps }>
+				<div className="telex-pixel-art-editor">
+					<div className="telex-pixel-art-editor__info">
+						<svg
+							className="telex-pixel-art-editor__icon"
+							width="32"
+							height="32"
+							viewBox="0 0 24 24"
+							fill="none"
+							xmlns="http://www.w3.org/2000/svg"
+						>
+							<rect
+								x="2"
+								y="2"
+								width="5"
+								height="5"
+								rx="0.5"
+								fill="#cf2e2e"
+							/>
+							<rect
+								x="9.5"
+								y="2"
+								width="5"
+								height="5"
+								rx="0.5"
+								fill="#ff6900"
+							/>
+							<rect
+								x="17"
+								y="2"
+								width="5"
+								height="5"
+								rx="0.5"
+								fill="#fcb900"
+							/>
+							<rect
+								x="2"
+								y="9.5"
+								width="5"
+								height="5"
+								rx="0.5"
+								fill="#00d084"
+							/>
+							<rect
+								x="9.5"
+								y="9.5"
+								width="5"
+								height="5"
+								rx="0.5"
+								fill="#0693e3"
+							/>
+							<rect
+								x="17"
+								y="9.5"
+								width="5"
+								height="5"
+								rx="0.5"
+								fill="#9b51e0"
+							/>
+							<rect
+								x="2"
+								y="17"
+								width="5"
+								height="5"
+								rx="0.5"
+								fill="#0693e3"
+							/>
+							<rect
+								x="9.5"
+								y="17"
+								width="5"
+								height="5"
+								rx="0.5"
+								fill="#cf2e2e"
+							/>
+							<rect
+								x="17"
+								y="17"
+								width="5"
+								height="5"
+								rx="0.5"
+								fill="#00d084"
+							/>
+						</svg>
+						<div className="telex-pixel-art-editor__text">
+							<strong>
+								{ __( 'Pixel Art Creator', 'telex-pixel-art' ) }
+							</strong>
+							<span>
+								{ columns }{ ' ' }
+								{ __( 'columns', 'telex-pixel-art' ) } &times;{ ' ' }
+								{ rows } { __( 'rows', 'telex-pixel-art' ) }
+							</span>
+							<span className="telex-pixel-art-editor__hint">
+								{ __(
+									'Interactive painting grid on the frontend',
+									'telex-pixel-art'
+								) }
+							</span>
+						</div>
+					</div>
+					<div
+						className="telex-pixel-art-editor__preview"
+						style={ {
+							gridTemplateColumns: `repeat(${ previewCols }, 1fr)`,
+							gridTemplateRows: `repeat(${ previewRows }, 1fr)`,
+						} }
+					>
+						{ previewCells.map( ( idx ) => (
+							<span
+								key={ idx }
+								className="telex-pixel-art-editor__cell"
+							/>
+						) ) }
+					</div>
+				</div>
+			</div>
+		</>
 	);
 }

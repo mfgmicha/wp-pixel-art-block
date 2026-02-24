@@ -1,44 +1,41 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
-	"name": "mfgmicha/pixel-art",
-	"version": "1.0.0",
-	"title": "Pixel Art",
+	"name": "mfgmicha/pixel-art-creator",
+	"version": "0.3.0",
+	"title": "Pixel Art Creator",
 	"category": "widgets",
-	"icon": "dashicons-art",
-	"description": "Create pixel art drawings with a customizable grid",
+	"icon": "art",
+	"description": "An interactive pixel art grid. Visitors paint with your theme's color palette on a configurable grid.",
+	"example": {
+		"attributes": {
+			"columns": 8,
+			"rows": 8
+		}
+	},
+	"attributes": {
+		"columns": {
+			"type": "number",
+			"default": 16
+		},
+		"rows": {
+			"type": "number",
+			"default": 16
+		}
+	},
 	"supports": {
 		"html": false,
 		"align": [ "wide", "full" ],
-		"customClassName": true
+		"spacing": {
+			"margin": true,
+			"padding": true
+		},
+		"interactivity": true
 	},
-	"attributes": {
-		"width": {
-			"type": "number",
-			"default": 16
-		},
-		"height": {
-			"type": "number",
-			"default": 16
-		},
-		"pixels": {
-			"type": "array",
-			"default": [],
-			"items": {
-				"type": "number"
-			}
-		},
-		"selectedColor": {
-			"type": "string",
-			"default": "#000000"
-		},
-		"showGrid": {
-			"type": "boolean",
-			"default": true
-		}
-	},
+	"textdomain": "pixel-art-creator",
 	"editorScript": "file:./index.js",
 	"editorStyle": "file:./index.css",
 	"style": "file:./style-index.css",
-	"viewScript": "file:./view.js"
+	"render": "file:./render.php",
+	"viewScriptModule": "file:./view.js"
 }

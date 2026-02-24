@@ -1,37 +1,20 @@
 {
-	"name": "pixel-art-block",
-	"version": "1.0.0",
-	"description": "WordPress Pixel Art Block Plugin",
-	"author": "MFGMicha",
+	"name": "@mfgmicha/pixel-art-creator",
+	"version": "0.3.0",
+	"description": "An interactive pixel art grid. Visitors paint with your theme's color palette on a configurable grid.",
+	"author": "Micha Krapp",
 	"license": "GPL-2.0-or-later",
 	"main": "build/index.js",
 	"scripts": {
-		"build": "wp-scripts build",
-		"start": "wp-scripts start",
-		"check-licenses": "wp-scripts check-licenses",
+		"build": "wp-scripts build --experimental-modules",
 		"format": "wp-scripts format",
 		"lint:css": "wp-scripts lint-style",
 		"lint:js": "wp-scripts lint-js",
 		"packages-update": "wp-scripts packages-update",
 		"plugin-zip": "wp-scripts plugin-zip",
-		"test:server": "npx @wp-playground/cli server --port=8889 --mount=\"$(pwd):/wordpress/wp-content/plugins/pixel-art-block\"",
-		"test": "npx playwright test"
-	},
-	"dependencies": {
-		"@wordpress/scripts": "^30.0.0"
-	},
-	"keywords": [
-		"wordpress",
-		"block",
-		"pixel-art",
-		"drawing",
-		"grid"
-	],
-	"engines": {
-		"node": ">=20.0.0",
-		"npm": ">=10.0.0"
+		"start": "wp-scripts start --experimental-modules"
 	},
 	"devDependencies": {
-		"@playwright/test": "^1.58.2"
+		"@wordpress/scripts": "^30.15.0"
 	}
 }

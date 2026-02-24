@@ -1,0 +1,80 @@
+.wp-block-telex-block-telex-pixel-art {
+
+	/* --- Palette --- */
+	.telex-pixel-art-palette {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+		margin-bottom: 12px;
+		align-items: center;
+	}
+
+	.telex-pixel-art-palette__swatch {
+		width: 28px;
+		height: 28px;
+		border-radius: 4px;
+		border: 2px solid transparent;
+		cursor: pointer;
+		transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+		box-sizing: border-box;
+		flex-shrink: 0;
+		padding: 0;
+
+		&:hover {
+			transform: scale(1.15);
+		}
+
+		&.is-active {
+			border-color: #1e1e1e;
+			box-shadow: 0 0 0 2px #fff, 0 0 0 4px #1e1e1e;
+			transform: scale(1.15);
+		}
+	}
+
+	/* --- Grid wrapper for horizontal scroll --- */
+	.telex-pixel-art-grid-wrapper {
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+		padding-bottom: 4px;
+	}
+
+	/* --- Grid --- */
+	.telex-pixel-art-grid {
+		display: grid;
+		gap: 0;
+		border: 1px solid #ddd;
+		width: fit-content;
+	}
+
+	.telex-pixel-art-grid__cell {
+		width: 24px;
+		height: 24px;
+		background-color: #fff;
+		border: 0.5px solid #e0e0e0;
+		cursor: pointer;
+		transition: background-color 0.1s ease;
+		box-sizing: border-box;
+
+		&:hover {
+			opacity: 0.8;
+		}
+	}
+
+	/* --- Reset button --- */
+	.telex-pixel-art-reset {
+		margin-top: 12px;
+		padding: 8px 20px;
+		background: #1e1e1e;
+		color: #fff;
+		border: none;
+		border-radius: 4px;
+		cursor: pointer;
+		font-size: 14px;
+		font-weight: 500;
+		transition: background-color 0.15s ease;
+
+		&:hover {
+			background: #444;
+		}
+	}
+}
