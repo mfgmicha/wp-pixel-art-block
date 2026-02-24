@@ -1,6 +1,6 @@
-.wp-block-telex-block-telex-pixel-art {
+.wp-block-mfgmicha-pixel-art-creator {
 
-	.telex-pixel-art-editor {
+	.pixel-art-creator-editor {
 		border: 1px solid #e0e0e0;
 		border-radius: 8px;
 		padding: 24px;
@@ -11,17 +11,17 @@
 		gap: 20px;
 	}
 
-	.telex-pixel-art-editor__info {
+	.pixel-art-creator-editor__info {
 		display: flex;
 		align-items: center;
 		gap: 14px;
 	}
 
-	.telex-pixel-art-editor__icon {
+	.pixel-art-creator-editor__icon {
 		flex-shrink: 0;
 	}
 
-	.telex-pixel-art-editor__text {
+	.pixel-art-creator-editor__text {
 		display: flex;
 		flex-direction: column;
 		gap: 2px;
@@ -37,13 +37,13 @@
 		}
 	}
 
-	.telex-pixel-art-editor__hint {
+	.pixel-art-creator-editor__hint {
 		font-size: 12px;
 		color: #999;
 		font-style: italic;
 	}
 
-	.telex-pixel-art-editor__preview {
+	.pixel-art-creator-editor__preview {
 		display: grid;
 		gap: 0;
 		border: 1px solid #ddd;
@@ -51,7 +51,7 @@
 		overflow: hidden;
 	}
 
-	.telex-pixel-art-editor__cell {
+	.pixel-art-creator-editor__cell {
 		width: 12px;
 		height: 12px;
 		background: #fff;

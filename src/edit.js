@@ -41,10 +41,10 @@ export default function Edit( { attributes, setAttributes } ) {
 				</PanelBody>
 			</InspectorControls>
 			<div { ...blockProps }>
-				<div className="telex-pixel-art-editor">
-					<div className="telex-pixel-art-editor__info">
+				<div className="pixel-art-creator-editor">
+					<div className="pixel-art-creator-editor__info">
 						<svg
-							className="telex-pixel-art-editor__icon"
+							className="pixel-art-creator-editor__icon"
 							width="32"
 							height="32"
 							viewBox="0 0 24 24"
@@ -124,7 +124,7 @@ export default function Edit( { attributes, setAttributes } ) {
 								fill="#00d084"
 							/>
 						</svg>
-						<div className="telex-pixel-art-editor__text">
+						<div className="pixel-art-creator-editor__text">
 							<strong>
 								{ __( 'Pixel Art Creator', 'pixel-art-creator' ) }
 							</strong>
@@ -133,7 +133,7 @@ export default function Edit( { attributes, setAttributes } ) {
 								{ __( 'columns', 'pixel-art-creator' ) } &times;{ ' ' }
 								{ rows } { __( 'rows', 'pixel-art-creator' ) }
 							</span>
-							<span className="telex-pixel-art-editor__hint">
+							<span className="pixel-art-creator-editor__hint">
 								{ __(
 									'Interactive painting grid on the frontend',
 									'pixel-art-creator'
@@ -142,7 +142,7 @@ export default function Edit( { attributes, setAttributes } ) {
 						</div>
 					</div>
 					<div
-						className="telex-pixel-art-editor__preview"
+						className="pixel-art-creator-editor__preview"
 						style={ {
 							gridTemplateColumns: `repeat(${ previewCols }, 1fr)`,
 							gridTemplateRows: `repeat(${ previewRows }, 1fr)`,
@@ -151,7 +151,7 @@ export default function Edit( { attributes, setAttributes } ) {
 						{ previewCells.map( ( idx ) => (
 							<span
 								key={ idx }
-								className="telex-pixel-art-editor__cell"
+								className="pixel-art-creator-editor__cell"
 							/>
 						) ) }
 					</div>
