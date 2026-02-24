@@ -26,6 +26,13 @@ Pixel Art Creator brings creative fun to your WordPress site. Place the block on
 
 Perfect for creative portfolios, children's sites, art blogs, or any site that wants to add a playful interactive element.
 
+
+## Test on WordPress Playground
+
+Try the Pixel Art Creator Block instantly in your browser without installing WordPress locally:
+
+**[Open in WordPress Playground](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/mfgmicha/wp-pixel-art-block/main/blueprint.json)**
+
 ## Installation
 
 1. Upload the plugin files to the `/wp-content/plugins/pixel-art-creator` directory, or install the plugin through the WordPress plugins screen directly.
