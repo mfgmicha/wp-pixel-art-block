@@ -173,11 +173,11 @@ wp_interactivity_state(
 
 	// Reset button.
 	$output .= '<button type="button" class="telex-pixel-art-reset" data-wp-on--click="actions.resetGrid">'
-		. esc_html__( 'Reset', 'telex-pixel-art' )
+		. esc_html__( 'Reset', 'pixel-art-creator' )
 		. '</button>';
 
 	// Noscript fallback.
-	$output .= '<noscript><p>' . esc_html__( 'Pixel Art Creator requires JavaScript to be enabled.', 'telex-pixel-art' ) . '</p></noscript>';
+	$output .= '<noscript><p>' . esc_html__( 'Pixel Art Creator requires JavaScript to be enabled.', 'pixel-art-creator' ) . '</p></noscript>';
 	 */
 	?>
 

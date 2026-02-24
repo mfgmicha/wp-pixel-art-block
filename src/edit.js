@@ -19,9 +19,9 @@ export default function Edit( { attributes, setAttributes } ) {
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title={ __( 'Grid Settings', 'telex-pixel-art' ) }>
+				<PanelBody title={ __( 'Grid Settings', 'pixel-art-creator' ) }>
 					<RangeControl
-						label={ __( 'Columns', 'telex-pixel-art' ) }
+						label={ __( 'Columns', 'pixel-art-creator' ) }
 						value={ columns }
 						onChange={ ( value ) =>
 							setAttributes( { columns: value } )
@@ -30,7 +30,7 @@ export default function Edit( { attributes, setAttributes } ) {
 						max={ 32 }
 					/>
 					<RangeControl
-						label={ __( 'Rows', 'telex-pixel-art' ) }
+						label={ __( 'Rows', 'pixel-art-creator' ) }
 						value={ rows }
 						onChange={ ( value ) =>
 							setAttributes( { rows: value } )
@@ -126,17 +126,17 @@ export default function Edit( { attributes, setAttributes } ) {
 						</svg>
 						<div className="telex-pixel-art-editor__text">
 							<strong>
-								{ __( 'Pixel Art Creator', 'telex-pixel-art' ) }
+								{ __( 'Pixel Art Creator', 'pixel-art-creator' ) }
 							</strong>
 							<span>
 								{ columns }{ ' ' }
-								{ __( 'columns', 'telex-pixel-art' ) } &times;{ ' ' }
-								{ rows } { __( 'rows', 'telex-pixel-art' ) }
+								{ __( 'columns', 'pixel-art-creator' ) } &times;{ ' ' }
+								{ rows } { __( 'rows', 'pixel-art-creator' ) }
 							</span>
 							<span className="telex-pixel-art-editor__hint">
 								{ __(
 									'Interactive painting grid on the frontend',
-									'telex-pixel-art'
+									'pixel-art-creator'
 								) }
 							</span>
 						</div>
