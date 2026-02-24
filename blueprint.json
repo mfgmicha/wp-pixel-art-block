@@ -15,7 +15,7 @@
     },
     {
       "step": "activatePlugin",
-      "pluginPath": "wp-pixel-art-block-main/pixel-art-block.php"
+      "pluginPath": "wp-pixel-art-block-main/plugin.php"
     },
     {
       "step": "wp-cli",
