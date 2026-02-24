@@ -93,7 +93,7 @@ store( 'telex/pixel-art', {
 				return;
 			}
 			const target = event.target;
-			if ( target && target.classList.contains( 'telex-pixel-art-grid__cell' ) ) {
+			if ( target && target.classList.contains( 'pixel-art-creator-grid__cell' ) ) {
 				target.style.backgroundColor = ctx.activeColor;
 				target.setAttribute( 'data-cell-color', ctx.activeColor );
 			}
@@ -104,11 +104,11 @@ store( 'telex/pixel-art', {
 			if ( ! ref ) {
 				return;
 			}
-			const wrapper = ref.closest( '.wp-block-telex-block-telex-pixel-art' );
+			const wrapper = ref.closest( '.wp-block-mfgmicha-pixel-art-creator' );
 			if ( ! wrapper ) {
 				return;
 			}
-			const cells = wrapper.querySelectorAll( '.telex-pixel-art-grid__cell' );
+			const cells = wrapper.querySelectorAll( '.pixel-art-creator-grid__cell' );
 			for ( let i = 0; i < cells.length; i++ ) {
 				cells[ i ].style.backgroundColor = '#fff';
 				cells[ i ].setAttribute( 'data-cell-color', '' );

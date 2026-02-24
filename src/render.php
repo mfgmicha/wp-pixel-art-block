@@ -19,8 +19,6 @@ $palette = array();
 // Method 1: wp_get_global_settings with nested structure.
 if ( function_exists( 'wp_get_global_settings' ) ) {
 	$color_palette = wp_get_global_settings( array( 'color', 'palette' ) );
-	
-	//error_log( print_r($color_palette, true));
 
 	if ( is_array( $color_palette ) && ! empty( $color_palette ) ) {
 		// Could be nested by origin: { default: [...], theme: [...], custom: [...] }.
@@ -37,22 +35,6 @@ if ( function_exists( 'wp_get_global_settings' ) ) {
 	}
 }
 
-// Hardcoded fallback.
-/*
-if ( empty( $palette ) ) {
-	$palette = array(
-		array( 'name' => 'Black', 'slug' => 'black', 'color' => '#000000' ),
-		array( 'name' => 'White', 'slug' => 'white', 'color' => '#ffffff' ),
-		array( 'name' => 'Red', 'slug' => 'red', 'color' => '#cf2e2e' ),
-		array( 'name' => 'Orange', 'slug' => 'orange', 'color' => '#ff6900' ),
-		array( 'name' => 'Yellow', 'slug' => 'yellow', 'color' => '#fcb900' ),
-		array( 'name' => 'Green', 'slug' => 'green', 'color' => '#00d084' ),
-		array( 'name' => 'Blue', 'slug' => 'blue', 'color' => '#0693e3' ),
-		array( 'name' => 'Purple', 'slug' => 'purple', 'color' => '#9b51e0' ),
-	);
-}
-*/
-
 $colors = array();
 foreach ( $palette as $item ) {
 	if ( ! empty( $item['color'] ) ) {
@@ -68,18 +50,16 @@ $first_color = ! empty( $colors[0]['color'] ) ? $colors[0]['color'] : '#000000';
 
 $total_cells = $columns * $rows;
 
-//error_log( print_r($colors, true) );
-
 // Adds the global state.
 wp_interactivity_state(
-	'pixel-art',
+	'mfgmicha/pixel-art-creator',
 	array(
 		'isPainting'    => false,
 		'activeColor' => $colors[2]['color'],
 
-		'buttonText' => esc_html__( 'Start Painting', 'pixel-art' ),
-		'startText' => esc_html__( 'Start Painting', 'pixel-art' ),
-		'stopText' => esc_html__( 'Stop Painting', 'pixel-art' ),
+		'buttonText' => esc_html__( 'Start Painting', 'pixel-art-creator' ),
+		'startText' => esc_html__( 'Start Painting', 'pixel-art-creator' ),
+		'stopText' => esc_html__( 'Stop Painting', 'pixel-art-creator' ),
 
 		'colors'	  => $colors,
 		'columns'     => $columns,
@@ -90,12 +70,12 @@ wp_interactivity_state(
 
 <div
 	<?php echo get_block_wrapper_attributes(); ?>
-	data-wp-interactive="pixel-art"
+	data-wp-interactive="mfgmicha/pixel-art-creator"
 	<?php // echo wp_interactivity_data_wp_context( array( 'activeColor' => 'white' ) ); ?>
 >
 
 	<!-- Palette swatches. -->
-	<div class="telex-pixel-art-palette">
+	<div class="pixel-art-creator-palette">
 		<button
 			data-wp-on--click="actions.togglePainting"
 			data-wp-text="state.buttonText"
@@ -106,7 +86,7 @@ wp_interactivity_state(
 				data-wp-each="state.colors"
 				data-wp-each-key="context.item.slug"
 			>
-				<button type="button" class="telex-pixel-art-palette__swatch"
+				<button type="button" class="pixel-art-creator-palette__swatch"
 					data-wp-style--background="context.item.color"
 				>
 				</button>
@@ -130,7 +110,7 @@ wp_interactivity_state(
 			$label      = ! empty( $color_item['name'] ) ? $color_item['name'] : $color_item['color'];
 
 			$output .= '<button type="button"'
-				. ' class="telex-pixel-art-palette__swatch' . esc_attr( $is_active_class ) . '"'
+				. ' class="pixel-art-creator-palette__swatch' . esc_attr( $is_active_class ) . '"'
 				. ' style="background-color: ' . esc_attr( $color_item['color'] ) . ';' . $light_style . '"'
 				. ' aria-label="' . esc_attr( $label ) . '"'
 				. ' title="' . esc_attr( $label ) . '"'
@@ -151,8 +131,8 @@ wp_interactivity_state(
 	// Grid.
 	$grid_style = 'grid-template-columns: repeat(' . $columns . ', 24px); grid-template-rows: repeat(' . $rows . ', 24px);';
 
-	$output .= '<div class="telex-pixel-art-grid-wrapper">';
-	$output .= '<div class="telex-pixel-art-grid" style="' . esc_attr( $grid_style ) . '"'
+	$output .= '<div class="pixel-art-creator-grid-wrapper">';
+	$output .= '<div class="pixel-art-creator-grid" style="' . esc_attr( $grid_style ) . '"'
 		. ' data-wp-on--mousedown="actions.startPainting"'
 		. ' data-wp-on--mousemove="actions.paintOnDrag"'
 		. ' data-wp-on--mouseup="actions.stopPainting"'
@@ -160,7 +140,7 @@ wp_interactivity_state(
 		. '>';
 
 	for ( $i = 0; $i < $total_cells; $i++ ) {
-		$output .= '<div class="telex-pixel-art-grid__cell"'
+		$output .= '<div class="pixel-art-creator-grid__cell"'
 			. ' role="button" tabindex="0"'
 			. ' aria-label="' . esc_attr( 'Pixel ' . ( $i + 1 ) ) . '"'
 			. ' data-cell-color=""'
@@ -172,7 +152,7 @@ wp_interactivity_state(
 	$output .= '</div></div>';
 
 	// Reset button.
-	$output .= '<button type="button" class="telex-pixel-art-reset" data-wp-on--click="actions.resetGrid">'
+	$output .= '<button type="button" class="pixel-art-creator-reset" data-wp-on--click="actions.resetGrid">'
 		. esc_html__( 'Reset', 'pixel-art-creator' )
 		. '</button>';
 
