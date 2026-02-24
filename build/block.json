@@ -1,8 +1,8 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
-  "name": "telex/block-telex-pixel-art",
-  "version": "0.2.0",
+  "name": "mfgmicha/pixel-art-creator",
+  "version": "0.3.0",
   "title": "Pixel Art Creator",
   "category": "widgets",
   "icon": "art",
@@ -35,7 +35,7 @@
     },
     "interactivity": true
   },
-  "textdomain": "telex-pixel-art",
+  "textdomain": "pixel-art-creator",
   "editorScript": "file:./index.js",
   "editorStyle": "file:./index.css",
   "style": "file:./style-index.css",
