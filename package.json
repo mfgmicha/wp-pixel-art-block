@@ -13,6 +13,9 @@
 		"packages-update": "wp-scripts packages-update",
 		"plugin-zip": "wp-scripts plugin-zip",
 		"start": "wp-scripts start --experimental-modules",
+		"test:playwright": "wp-scripts test-playwright",
+		"test:playwright:help": "wp-scripts test-playwright --help",
+		"test:playwright:debug": "wp-scripts test-playwright --debug",
 		"makepot": "make-pot src languages --slug=pixel-art-creator --domain=block --headers=email:michakrapp@gmail.com --headers=\"name:Pixel Art Creator\" --headers=\"version:0.3.0\" --headers=\"author:Micha Krapp\"",
 		"makejson": "make-json build languages --slug=pixel-art-creator"
 	},
