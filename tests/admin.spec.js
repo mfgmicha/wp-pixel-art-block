@@ -1,13 +1,24 @@
 const { test, expect } = require('@playwright/test');
 
 async function loginToWordPress(page, username = 'admin', password = 'z2u7hIR#9Yz7VB)6#k453V8#') {
+    // First check if already logged in (works with --login flag in playground)
+    await page.goto('/wp-admin/');
+    await page.waitForLoadState('domcontentloaded');
+    await page.waitForTimeout(1000);
+
+    const bodyClass = await page.locator('body').getAttribute('class');
+    if (bodyClass && bodyClass.includes('wp-admin')) {
+        return; // Already logged in via playground --login flag
+    }
+
+    // If not logged in, try manual login
     await page.goto('/wp-login.php');
     await page.waitForLoadState('domcontentloaded');
 
-    // Check if we're already logged in
-    const bodyClass = await page.locator('body').getAttribute('class');
-    if (bodyClass && bodyClass.includes('wp-admin')) {
-        return; // Already logged in
+    // Check again after redirect
+    const bodyClass2 = await page.locator('body').getAttribute('class');
+    if (bodyClass2 && bodyClass2.includes('wp-admin')) {
+        return; // Already logged in after redirect
     }
 
     // Fill in login credentials

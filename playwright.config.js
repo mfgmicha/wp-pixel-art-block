@@ -10,7 +10,7 @@ module.exports = defineConfig({
   retries: 0,
   reporter: 'list',
   use: {
-    baseURL: 'http://localhost:8883',
+    baseURL: 'http://localhost:8889',
     trace: 'on-first-retry',
     headless: true,
   },

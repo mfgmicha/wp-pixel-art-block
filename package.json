@@ -17,10 +17,13 @@
 		"test:playwright:help": "wp-scripts test-playwright --help",
 		"test:playwright:debug": "wp-scripts test-playwright --debug",
 		"makepot": "make-pot src languages --slug=pixel-art-creator --domain=block --headers=email:michakrapp@gmail.com --headers=\"name:Pixel Art Creator\" --headers=\"version:0.3.0\" --headers=\"author:Micha Krapp\"",
-		"makejson": "make-json build languages --slug=pixel-art-creator"
+		"makejson": "make-json build languages --slug=pixel-art-creator",
+		"env:start": "node ./node_modules/@wp-playground/cli/wp-playground.js server --port 8889 --mount-dir \".\" \"/var/www/html/wp-content/plugins/pixel-art-creator\" --login --blueprint ./blueprint.json",
+		"env:stop": "echo 'Server stopped (Ctrl+C)'"
 	},
 	"devDependencies": {
 		"@wordpress/scripts": "^30.15.0",
-		"@wp-blocks/make-pot": "^1.6.6"
+		"@wp-blocks/make-pot": "^1.6.6",
+		"@wp-playground/cli": "^3.1.2"
 	}
 }
