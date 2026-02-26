@@ -20,9 +20,8 @@ npm run env:start
 
 This command:
 - Starts a local WordPress server on port 8889
-- Mounts the plugin directory
+- Mounts the plugin directory (auto-mounted)
 - Runs the blueprint to create the Pixel Art page
-- Enables auto-login
 
 ### Run All Tests
 
@@ -75,9 +74,16 @@ Increase the timeout in `playwright.config.js`:
 timeout: 120000, // 2 minutes
 ```
 
-### Login errors in admin tests
+### ES Module errors in browser console
 
-The admin tests try to auto-login using the `--login` flag. If login fails, the tests will still run but may skip certain checks.
+The WordPress Playground CLI has a known limitation where ES modules may not be served with the correct MIME type. This causes errors like:
+
+```
+Failed to load module script: Expected a JavaScript-or-Wasm module script but the server responded with a MIME type of ""
+```
+
+If you see these errors, the JavaScript interaction tests will fail. For full test coverage, use the hosted WordPress Playground instead:
+https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/mfgmicha/wp-pixel-art-block/main/.wordpress/blueprint.json
 
 ## Configuration
 
@@ -85,13 +91,14 @@ The admin tests try to auto-login using the `--login` flag. If login fails, the 
 
 The configuration is in `playwright.config.js`:
 
-- Base URL: http://localhost:8889
+- Base URL: http://127.0.0.1:8889
 - Test directory: ./tests
 - Timeout: 90000ms (90 seconds)
 
 ### Blueprint
 
-The `blueprint.json` file configures the WordPress Playground:
-- Installs and activates the plugin
+The `.wordpress/blueprint.json` file configures the WordPress Playground:
 - Creates a "Pixel Art" page with the block
 - Sets the landing page to /pixel-art/
+
+The plugin is auto-mounted from the local directory.

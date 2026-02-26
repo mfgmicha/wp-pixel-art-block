@@ -31,7 +31,21 @@ Perfect for creative portfolios, children's sites, art blogs, or any site that w
 
 Try the Pixel Art Creator Block instantly in your browser without installing WordPress locally:
 
-**[Open in WordPress Playground](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/mfgmicha/wp-pixel-art-block/main/blueprint.json)**
+**[Open in WordPress Playground](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/mfgmicha/wp-pixel-art-block/main/.wordpress/blueprint.json)**
+
+### Local Development Testing
+
+For local development with the Playground CLI:
+
+```bash
+# Start the local server
+npm run env:start
+
+# Run tests
+npm run test:playwright
+```
+
+Note: The local CLI has a known limitation with ES modules. For full test coverage, use the hosted Playground link above.
 
 ## Installation
 
