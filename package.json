@@ -18,7 +18,7 @@
 		"test:playwright:debug": "wp-scripts test-playwright --debug",
 		"makepot": "make-pot src languages --slug=pixel-art-creator --domain=block --headers=email:michakrapp@gmail.com --headers=\"name:Pixel Art Creator\" --headers=\"version:0.3.0\" --headers=\"author:Micha Krapp\"",
 		"makejson": "make-json build languages --slug=pixel-art-creator",
-		"env:start": "wp-playground-cli start --port 8889 --blueprint ./.wordpress/blueprint.json",
+		"env:start": "wp-playground-cli start --port 8889 --blueprint ./.wordpress/blueprint.local.json",
 		"env:stop": "echo 'Server stopped (Ctrl+C)'"
 	},
 	"devDependencies": {
