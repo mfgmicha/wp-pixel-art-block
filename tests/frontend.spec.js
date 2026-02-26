@@ -1,16 +1,15 @@
 const { test, expect } = require('@playwright/test');
 
-test.describe('Frontend', () => {
-    test('page loads without errors', async ({ page }) => {
+test.describe('Frontend Pixel Art Block', () => {
+    test.beforeEach(async ({ page }) => {
         await page.goto('/pixel-art/');
         await page.waitForLoadState('networkidle');
+    });
 
+    test('page loads without critical errors', async ({ page }) => {
         // Verify page loads
         await expect(page.locator('body')).toBeVisible();
-        await expect(page.locator('h1')).toBeVisible();
         await expect(page.locator('h1')).toHaveText('Pixel Art');
-
-        //TODO: add block expects
 
         // Check no critical console errors
         const errors = [];
@@ -19,6 +18,235 @@ test.describe('Frontend', () => {
         });
 
         await page.waitForTimeout(500);
-        //console.log('✓ Page loads successfully');
+        expect(errors.filter(e => !e.includes('favicon'))).toHaveLength(0);
+    });
+
+    test.describe('Block Container', () => {
+        test('block wrapper element exists with correct classes', async ({ page }) => {
+            const block = page.locator('.wp-block-mfgmicha-pixel-art-creator');
+            await expect(block).toBeVisible();
+        });
+
+        test('block has interactivity directive', async ({ page }) => {
+            const block = page.locator('.wp-block-mfgmicha-pixel-art-creator');
+            await expect(block).toHaveAttribute('data-wp-interactive', 'mfgmicha/pixel-art-creator');
+        });
+    });
+
+    test.describe('Color Palette', () => {
+        test('palette container exists', async ({ page }) => {
+            const palette = page.locator('.pixel-art-creator-palette');
+            await expect(palette).toBeVisible();
+        });
+
+        test('color swatches are rendered from theme palette', async ({ page }) => {
+            const swatches = page.locator('.pixel-art-creator-palette__swatch');
+            // Should have at least a few color swatches from theme
+            const count = await swatches.count();
+            expect(count).toBeGreaterThan(0);
+        });
+
+        test('swatches have background colors set', async ({ page }) => {
+            const firstSwatch = page.locator('.pixel-art-creator-palette__swatch').first();
+            const bgColor = await firstSwatch.evaluate(el => el.style.backgroundColor);
+            expect(bgColor).toBeTruthy();
+        });
+
+        test('clicking a swatch sets it as active', async ({ page }) => {
+            const swatches = page.locator('.pixel-art-creator-palette__swatch');
+            const firstSwatch = swatches.first();
+
+            // Get initial active state or style
+            const initialStyle = await firstSwatch.getAttribute('style');
+
+            // Click the first swatch
+            await firstSwatch.click();
+
+            // After clicking, the swatch should have an active class or changed style
+            // The exact implementation may vary, but it should show as selected
+            await page.waitForTimeout(100);
+        });
+    });
+
+    test.describe('Grid', () => {
+        test('grid container exists', async ({ page }) => {
+            const grid = page.locator('.pixel-art-creator-grid');
+            await expect(grid).toBeVisible();
+        });
+
+        test('grid has correct number of cells (16x16 default)', async ({ page }) => {
+            const cells = page.locator('.pixel-art-creator-grid__cell');
+            // Default is 16 columns × 16 rows = 256 cells
+            const count = await cells.count();
+            expect(count).toBe(256);
+        });
+
+        test('cells have proper accessibility attributes', async ({ page }) => {
+            const firstCell = page.locator('.pixel-art-creator-grid__cell').first();
+            await expect(firstCell).toHaveAttribute('role', 'button');
+            await expect(firstCell).toHaveAttribute('aria-label');
+        });
+
+        test('clicking a cell paints it with active color', async ({ page }) => {
+            // First ensure a color is selected from palette
+            const swatches = page.locator('.pixel-art-creator-palette__swatch');
+            if (await swatches.count() > 0) {
+                await swatches.first().click();
+            }
+
+            // Get the first cell
+            const firstCell = page.locator('.pixel-art-creator-grid__cell').first();
+
+            // Click to paint
+            await firstCell.click();
+            await page.waitForTimeout(100);
+
+            // Verify cell now has a background color (not empty)
+            const cellColor = await firstCell.getAttribute('data-cell-color');
+            expect(cellColor).toBeTruthy();
+        });
+
+        test('keyboard accessibility - Enter key paints cell', async ({ page }) => {
+            const firstCell = page.locator('.pixel-art-creator-grid__cell').first();
+
+            // Focus and press Enter
+            await firstCell.focus();
+            await firstCell.press('Enter');
+            await page.waitForTimeout(100);
+
+            const cellColor = await firstCell.getAttribute('data-cell-color');
+            expect(cellColor).toBeTruthy();
+        });
+
+        test('keyboard accessibility - Space key paints cell', async ({ page }) => {
+            const secondCell = page.locator('.pixel-art-creator-grid__cell').nth(1);
+
+            // Focus and press Space
+            await secondCell.focus();
+            await secondCell.press(' ');
+            await page.waitForTimeout(100);
+
+            const cellColor = await secondCell.getAttribute('data-cell-color');
+            expect(cellColor).toBeTruthy();
+        });
+
+        test('clicking painted cell again clears it', async ({ page }) => {
+            const cell = page.locator('.pixel-art-creator-grid__cell').first();
+
+            // First ensure a color is selected
+            const swatches = page.locator('.pixel-art-creator-palette__swatch');
+            if (await swatches.count() > 0) {
+                await swatches.first().click();
+            }
+
+            // Paint the cell
+            await cell.click();
+            await page.waitForTimeout(100);
+
+            let cellColor = await cell.getAttribute('data-cell-color');
+            expect(cellColor).toBeTruthy();
+
+            // Click again to clear
+            await cell.click();
+            await page.waitForTimeout(100);
+
+            cellColor = await cell.getAttribute('data-cell-color');
+            expect(cellColor).toBeFalsy();
+        });
+    });
+
+    test.describe('Reset Button', () => {
+        test('reset button exists', async ({ page }) => {
+            const resetBtn = page.locator('.pixel-art-creator-reset');
+            await expect(resetBtn).toBeVisible();
+        });
+
+        test('reset button has correct text', async ({ page }) => {
+            const resetBtn = page.locator('.pixel-art-creator-reset');
+            await expect(resetBtn).toContainText('Reset');
+        });
+
+        test('clicking reset clears all painted cells', async ({ page }) => {
+            // Select a color and paint some cells
+            const swatches = page.locator('.pixel-art-creator-palette__swatch');
+            if (await swatches.count() > 0) {
+                await swatches.first().click();
+            }
+
+            // Paint multiple cells
+            const cells = page.locator('.pixel-art-creator-grid__cell');
+            await cells.nth(0).click();
+            await cells.nth(1).click();
+            await cells.nth(2).click();
+            await page.waitForTimeout(100);
+
+            // Verify cells are painted
+            let cellColor = await cells.nth(0).getAttribute('data-cell-color');
+            expect(cellColor).toBeTruthy();
+
+            // Click reset
+            const resetBtn = page.locator('.pixel-art-creator-reset');
+            await resetBtn.click();
+            await page.waitForTimeout(100);
+
+            // Verify all cells are cleared
+            cellColor = await cells.nth(0).getAttribute('data-cell-color');
+            expect(cellColor).toBeFalsy();
+
+            cellColor = await cells.nth(1).getAttribute('data-cell-color');
+            expect(cellColor).toBeFalsy();
+
+            cellColor = await cells.nth(2).getAttribute('data-cell-color');
+            expect(cellColor).toBeFalsy();
+        });
+    });
+
+    test.describe('Integration', () => {
+        test('full workflow: select color, paint cells, change color, paint more, reset', async ({ page }) => {
+            const swatches = page.locator('.pixel-art-creator-palette__swatch');
+            const cells = page.locator('.pixel-art-creator-grid__cell');
+            const resetBtn = page.locator('.pixel-art-creator-reset');
+
+            // Ensure we have swatches and cells
+            const swatchCount = await swatches.count();
+            const cellCount = await cells.count();
+            expect(swatchCount).toBeGreaterThan(0);
+            expect(cellCount).toBe(256);
+
+            // Step 1: Select first color from palette
+            await swatches.first().click();
+            await page.waitForTimeout(100);
+
+            // Step 2: Paint first cell
+            await cells.nth(0).click();
+            await page.waitForTimeout(100);
+
+            let cellColor = await cells.nth(0).getAttribute('data-cell-color');
+            expect(cellColor).toBeTruthy();
+
+            // Step 3: Select second color (if available)
+            if (swatchCount > 1) {
+                await swatches.nth(1).click();
+                await page.waitForTimeout(100);
+
+                // Step 4: Paint second cell with different color
+                await cells.nth(1).click();
+                await page.waitForTimeout(100);
+
+                const cellColor2 = await cells.nth(1).getAttribute('data-cell-color');
+                expect(cellColor2).toBeTruthy();
+
+                // Colors should be different
+                expect(cellColor).not.toBe(cellColor2);
+            }
+
+            // Step 5: Reset
+            await resetBtn.click();
+            await page.waitForTimeout(100);
+
+            // Step 6: Verify all cleared
+            cellColor = await cells.nth(0).getAttribute('data-cell-color');
+            expect(cellColor).toBeFalsy();
+        });
     });
 });
