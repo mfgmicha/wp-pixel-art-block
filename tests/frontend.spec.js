@@ -2,6 +2,11 @@ const { test, expect } = require('@playwright/test');
 
 test.describe('Frontend Pixel Art Block', () => {
     test.beforeEach(async ({ page }) => {
+        // Capture console logs
+        page.on('console', msg => {
+            console.log(`[Browser Console] ${msg.type()}: ${msg.text()}`);
+        });
+
         await page.goto('/pixel-art/');
         await page.waitForLoadState('networkidle');
     });

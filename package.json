@@ -18,7 +18,8 @@
 		"test:playwright:debug": "wp-scripts test-playwright --debug",
 		"makepot": "make-pot src languages --slug=pixel-art-creator --domain=block --headers=email:michakrapp@gmail.com --headers=\"name:Pixel Art Creator\" --headers=\"version:0.3.0\" --headers=\"author:Micha Krapp\"",
 		"makejson": "make-json build languages --slug=pixel-art-creator",
-		"env:start": "node ./node_modules/@wp-playground/cli/wp-playground.js server --port 8889 --mount-dir \".\" \"/var/www/html/wp-content/plugins/pixel-art-creator\" --login --blueprint ./blueprint.json",
+		"env:start": "node ./node_modules/@wp-playground/cli/wp-playground.js server --port 8889 --mount-dir \".\" \"/var/www/html/wp-content/plugins/wp-pixel-art-block-main\" --login --blueprint ./blueprint.json",
+		"env:start:local": "node ./node_modules/@wp-playground/cli/wp-playground.js start --port 8889 --blueprint ./blueprint.local.json",
 		"env:stop": "echo 'Server stopped (Ctrl+C)'"
 	},
 	"devDependencies": {
