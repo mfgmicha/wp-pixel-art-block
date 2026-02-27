@@ -8,10 +8,8 @@ test.describe('Frontend Pixel Art Block', () => {
                 console.log(`[Browser Error] ${msg.text()}`);
             }
         });
-
-        // Navigate with shorter timeout to fail fast
-        await page.goto('/pixel-art/', { timeout: 10000 }).catch(() => {});
-        await page.waitForLoadState('domcontentloaded').catch(() => {});
+        // Navigate - fail fast if server not available
+        await page.goto('/pixel-art/', { timeout: 15000 });
     });
 
     test('page loads without critical errors', async ({ page }) => {
