@@ -69,6 +69,7 @@ wp_interactivity_state(
 		'colors'      => $colors,
 		'columns'     => $columns,
 		'rows'        => $rows,
+		'blockId'     => $block->client_id,
 	)
 );
 ?>

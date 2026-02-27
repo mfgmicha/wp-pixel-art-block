@@ -2,6 +2,56 @@ import { store, getContext, getElement } from '@wordpress/interactivity';
 
 console.log( 'pxl view loaded' );
 
+// Helper to get localStorage key for this block.
+const getStorageKey = () => {
+	return `pixel-art-${ state.blockId }`;
+};
+
+// Helper to save grid to localStorage.
+const saveToStorage = () => {
+	const wrapper = document.querySelector( `.wp-block-mfgmicha-pixel-art-creator[data-block-id="${ state.blockId }"]` );
+	if ( ! wrapper ) {
+		return;
+	}
+	const cells = wrapper.querySelectorAll( '.pixel-art-creator-grid__cell' );
+	const gridData = {};
+	cells.forEach( ( cell, index ) => {
+		const color = cell.getAttribute( 'data-cell-color' );
+		if ( color ) {
+			gridData[ index ] = color;
+		}
+	} );
+	try {
+		localStorage.setItem( getStorageKey(), JSON.stringify( gridData ) );
+	} catch ( e ) {
+		console.warn( 'Could not save to localStorage:', e );
+	}
+};
+
+// Helper to load grid from localStorage.
+const loadFromStorage = () => {
+	try {
+		const saved = localStorage.getItem( getStorageKey() );
+		if ( ! saved ) {
+			return;
+		}
+		const gridData = JSON.parse( saved );
+		const wrapper = document.querySelector( `.wp-block-mfgmicha-pixel-art-creator[data-block-id="${ state.blockId }"]` );
+		if ( ! wrapper ) {
+			return;
+		}
+		const cells = wrapper.querySelectorAll( '.pixel-art-creator-grid__cell' );
+		cells.forEach( ( cell, index ) => {
+			if ( gridData[ index ] ) {
+				cell.style.backgroundColor = gridData[ index ];
+				cell.setAttribute( 'data-cell-color', gridData[ index ] );
+			}
+		} );
+	} catch ( e ) {
+		console.warn( 'Could not load from localStorage:', e );
+	}
+};
+
 const { state } = store( 'mfgmicha/pixel-art-creator', {
 	state: {
 		get activeColor() {
@@ -44,6 +94,8 @@ const { state } = store( 'mfgmicha/pixel-art-creator', {
 				ref.style.backgroundColor = state.activeColor;
 				ref.setAttribute( 'data-cell-color', state.activeColor );
 			}
+			// Save to localStorage after painting.
+			saveToStorage();
 		},
 		handleCellKeydown( event ) {
 			if ( event.key === 'Enter' || event.key === ' ' ) {
@@ -60,6 +112,8 @@ const { state } = store( 'mfgmicha/pixel-art-creator', {
 					ref.style.backgroundColor = state.activeColor;
 					ref.setAttribute( 'data-cell-color', state.activeColor );
 				}
+				// Save to localStorage after painting.
+				saveToStorage();
 			}
 		},
 		resetGrid() {
@@ -77,6 +131,22 @@ const { state } = store( 'mfgmicha/pixel-art-creator', {
 				cells[ i ].style.backgroundColor = '#fff';
 				cells[ i ].setAttribute( 'data-cell-color', '' );
 			}
+			// Clear localStorage on reset.
+			try {
+				localStorage.removeItem( getStorageKey() );
+			} catch ( e ) {
+				console.warn( 'Could not clear localStorage:', e );
+			}
 		},
 	},
+} );
+
+// Initialize: Add block ID to wrapper and load saved data.
+document.addEventListener( 'DOMContentLoaded', () => {
+	const wrapper = document.querySelector( '.wp-block-mfgmicha-pixel-art-creator' );
+	if ( wrapper && state.blockId ) {
+		wrapper.setAttribute( 'data-block-id', state.blockId );
+		// Load saved grid from localStorage.
+		loadFromStorage();
+	}
 } );
