@@ -32,16 +32,9 @@ jobs:
                   cp -r build wp-pixel-art-block/
                   cp plugin.php wp-pixel-art-block/
 
-            - name: Upload artifact
-              uses: actions/upload-artifact@v4
-              with:
-                  name: plugin
-                  path: wp-pixel-art-block
-                  retention-days: 1
-
             - name: Post Playground Preview Button
               uses: WordPress/action-wp-playground-pr-preview@v2
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
                   mode: 'append-to-description'
-                  plugin-path: wp-pixel-art-block
+                  plugin-path: .
