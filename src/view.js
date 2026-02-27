@@ -1,7 +1,5 @@
 import { store, getContext, getElement } from '@wordpress/interactivity';
 
-console.log( 'pxl view loaded' );
-
 // Helper to get localStorage key for this block.
 const getStorageKey = () => {
 	return `pixel-art-${ state.blockId }`;
@@ -56,7 +54,6 @@ const { state } = store( 'mfgmicha/pixel-art-creator', {
 	state: {
 		get activeColor() {
 			// Return the selected color from state, or default to first color
-			console.log( 'activeColor getter:', state.selectedColor, state.colors?.[ 0 ]?.color );
 			return state.selectedColor || state.colors?.[ 0 ]?.color || '#000000';
 		},
 		get isActiveSwatch() {
@@ -73,20 +70,16 @@ const { state } = store( 'mfgmicha/pixel-art-creator', {
 				return;
 			}
 			const color = ref.getAttribute( 'data-swatch-color' );
-			console.log( 'selectColor:', color );
 			if ( color ) {
 				state.selectedColor = color;
 			}
 		},
 		paintCell() {
-			console.log( 'paintCell called' );
 			const { ref } = getElement();
 			if ( ! ref ) {
-				console.log( 'paintCell: no ref' );
 				return;
 			}
 			const current = ref.getAttribute( 'data-cell-color' ) || '';
-			console.log( 'paintCell: current=', current, 'activeColor=', state.activeColor );
 			if ( current && current.toLowerCase() === state.activeColor.toLowerCase() ) {
 				ref.style.backgroundColor = '#fff';
 				ref.setAttribute( 'data-cell-color', '' );
@@ -117,7 +110,6 @@ const { state } = store( 'mfgmicha/pixel-art-creator', {
 			}
 		},
 		resetGrid() {
-			console.log( 'pxl reset' );
 			const { ref } = getElement();
 			if ( ! ref ) {
 				return;
@@ -141,45 +133,78 @@ const { state } = store( 'mfgmicha/pixel-art-creator', {
 	},
 } );
 
+// Wait for the Interactivity API state to be available.
+const waitForState = () => {
+	return new Promise( ( resolve, reject ) => {
+		const maxAttempts = 100; // Max 1 second (100 * 10ms)
+		let attempts = 0;
+		const check = () => {
+			attempts++;
+			// Check if state.blockId is available
+			if ( state.blockId ) {
+				resolve( state.blockId );
+			} else if ( attempts >= maxAttempts ) {
+				// Timeout after 1 second - Interactivity API may not be available
+				console.warn( 'Pixel Art: Interactivity state not available' );
+				reject( new Error( 'State timeout' ) );
+			} else {
+				// Retry after a short delay
+				setTimeout( check, 10 );
+			}
+		};
+		check();
+	} );
+};
+
 // Initialize: Add block ID to wrapper, load saved data, and set up drag-to-paint.
-document.addEventListener( 'DOMContentLoaded', () => {
+document.addEventListener( 'DOMContentLoaded', async () => {
 	const wrapper = document.querySelector( '.wp-block-mfgmicha-pixel-art-creator' );
-	if ( wrapper && state.blockId ) {
-		wrapper.setAttribute( 'data-block-id', state.blockId );
+	if ( ! wrapper ) {
+		return;
+	}
+
+	// Wait for state.blockId to be available (Interactivity API loads asynchronously)
+	let blockId;
+	try {
+		blockId = await waitForState();
+		wrapper.setAttribute( 'data-block-id', blockId );
 		// Load saved grid from localStorage.
 		loadFromStorage();
+	} catch ( e ) {
+		// Interactivity API not available, skip localStorage and drag-to-paint
+		return;
+	}
 
-		// Set up drag-to-paint
-		let isMouseDown = false;
+	// Set up drag-to-paint
+	let isMouseDown = false;
 
-		wrapper.addEventListener( 'mousedown', ( e ) => {
-			// Only track if clicking on a cell or within the grid
-			if ( e.target.classList.contains( 'pixel-art-creator-grid__cell' ) ||
-				 e.target.closest( '.pixel-art-creator-grid' ) ) {
-				isMouseDown = true;
+	wrapper.addEventListener( 'mousedown', ( e ) => {
+		// Only track if clicking on a cell or within the grid
+		if ( e.target.classList.contains( 'pixel-art-creator-grid__cell' ) ||
+			 e.target.closest( '.pixel-art-creator-grid' ) ) {
+			isMouseDown = true;
+		}
+	} );
+
+	wrapper.addEventListener( 'mouseup', () => {
+		isMouseDown = false;
+	} );
+
+	// Handle mouse leaving the wrapper
+	wrapper.addEventListener( 'mouseleave', () => {
+		isMouseDown = false;
+	} );
+
+	// Add mouseenter handler to cells for drag painting
+	const cells = wrapper.querySelectorAll( '.pixel-art-creator-grid__cell' );
+	cells.forEach( ( cell ) => {
+		cell.addEventListener( 'mouseenter', () => {
+			if ( isMouseDown ) {
+				// Paint the cell while dragging
+				cell.style.backgroundColor = state.activeColor;
+				cell.setAttribute( 'data-cell-color', state.activeColor );
+				saveToStorage();
 			}
 		} );
-
-		wrapper.addEventListener( 'mouseup', () => {
-			isMouseDown = false;
-		} );
-
-		// Handle mouse leaving the wrapper
-		wrapper.addEventListener( 'mouseleave', () => {
-			isMouseDown = false;
-		} );
-
-		// Add mouseenter handler to cells for drag painting
-		const cells = wrapper.querySelectorAll( '.pixel-art-creator-grid__cell' );
-		cells.forEach( ( cell ) => {
-			cell.addEventListener( 'mouseenter', () => {
-				if ( isMouseDown ) {
-					// Paint the cell while dragging
-					cell.style.backgroundColor = state.activeColor;
-					cell.setAttribute( 'data-cell-color', state.activeColor );
-					saveToStorage();
-				}
-			} );
-		} );
-	}
+	} );
 } );
