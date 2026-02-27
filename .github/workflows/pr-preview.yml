@@ -26,7 +26,7 @@ jobs:
 
             - name: Create plugin zip
               run: |
-                  zip -r pixel-art-creator.zip . \
+                  zip -r plugin.zip . \
                       -x "node_modules/*" \
                       -x ".git/*" \
                       -x "tests/*" \
@@ -39,7 +39,7 @@ jobs:
             - uses: actions/upload-artifact@v4
               with:
                   name: built-plugin
-                  path: pixel-art-creator.zip
+                  path: plugin.zip
 
     expose-build:
         needs: build
