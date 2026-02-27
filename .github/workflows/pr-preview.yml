@@ -32,10 +32,32 @@ jobs:
                   cp -r build wp-pixel-art-block/
                   cp plugin.php wp-pixel-art-block/
 
+            - name: Create custom blueprint
+              run: |
+                  cat << 'EOF' > blueprint.json
+                  {
+                    "landingPage": "/pixel-art/",
+                    "preferredVersions": {"wp": "latest", "php": "8.4"},
+                    "steps": [
+                      {
+                        "step": "installPlugin",
+                        "pluginData": {
+                          "resource": "git:directory",
+                          "url": "https://github.com/mfgmicha/wp-pixel-art-block",
+                          "ref": "${{ github.head_ref }}"
+                        }
+                      },
+                      {
+                        "step": "wp-cli",
+                        "command": "wp post create --post_type=page --post_title='Pixel Art' --post_name='pixel-art' --post_content='<!-- wp:mfgmicha/pixel-art-creator /-->' --post_status=publish"
+                      }
+                    ]
+                  }
+                  EOF
+
             - name: Post Playground Preview Button
               uses: WordPress/action-wp-playground-pr-preview@v2
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
                   mode: 'append-to-description'
-                  plugin-path: .
-                  blueprint: '{"landingPage":"/pixel-art/","preferredVersions":{"wp":"latest","php":"8.4"},"steps":[{"step":"wp-cli","command":"wp post create --post_type=page --post_title=PixelArt --post_name=pixel-art --post_content=<!--wp:mfgmicha/pixel-art-creator/--> --post_status=publish"}]}'
+                  blueprint: blueprint.json
