@@ -206,6 +206,93 @@ test.describe('Frontend Pixel Art Block', () => {
         });
     });
 
+    test.describe('LocalStorage Persistence', () => {
+        test('painting a cell saves to localStorage', async ({ page }) => {
+            // Clear localStorage first
+            await page.evaluate(() => localStorage.clear());
+
+            // Select a color
+            const swatches = page.locator('.pixel-art-creator-palette__swatch');
+            if (await swatches.count() > 0) {
+                await swatches.first().click();
+            }
+
+            // Get the first cell and paint it
+            const firstCell = page.locator('.pixel-art-creator-grid__cell').first();
+            await firstCell.click();
+            await page.waitForTimeout(100);
+
+            // Check localStorage was updated
+            const storageData = await page.evaluate(() => {
+                const keys = Object.keys(localStorage);
+                return keys.filter(k => k.startsWith('pixel-art-'));
+            });
+            expect(storageData.length).toBeGreaterThan(0);
+        });
+
+        test('grid state persists after page reload', async ({ page }) => {
+            // Clear localStorage first
+            await page.evaluate(() => localStorage.clear());
+
+            // Select a color
+            const swatches = page.locator('.pixel-art-creator-palette__swatch');
+            const swatchCount = await swatches.count();
+            if (swatchCount > 0) {
+                await swatches.first().click();
+            }
+
+            // Get first cell color to paint with
+            const firstSwatchColor = await swatches.first().evaluate(el => el.getAttribute('data-swatch-color'));
+
+            // Paint first cell
+            const firstCell = page.locator('.pixel-art-creator-grid__cell').first();
+            await firstCell.click();
+            await page.waitForTimeout(100);
+
+            // Reload the page
+            await page.reload();
+            await page.waitForLoadState('networkidle');
+
+            // Check if the cell still has the color (loaded from localStorage)
+            const cellColor = await firstCell.getAttribute('data-cell-color');
+            expect(cellColor).toBe(firstSwatchColor);
+        });
+
+        test('reset clears localStorage', async ({ page }) => {
+            // Clear localStorage first
+            await page.evaluate(() => localStorage.clear());
+
+            // Select a color and paint
+            const swatches = page.locator('.pixel-art-creator-palette__swatch');
+            if (await swatches.count() > 0) {
+                await swatches.first().click();
+            }
+
+            const firstCell = page.locator('.pixel-art-creator-grid__cell').first();
+            await firstCell.click();
+            await page.waitForTimeout(100);
+
+            // Verify localStorage has data
+            let storageData = await page.evaluate(() => {
+                const keys = Object.keys(localStorage);
+                return keys.filter(k => k.startsWith('pixel-art-'));
+            });
+            expect(storageData.length).toBeGreaterThan(0);
+
+            // Click reset
+            const resetBtn = page.locator('.pixel-art-creator-reset');
+            await resetBtn.click();
+            await page.waitForTimeout(100);
+
+            // Verify localStorage is cleared
+            storageData = await page.evaluate(() => {
+                const keys = Object.keys(localStorage);
+                return keys.filter(k => k.startsWith('pixel-art-'));
+            });
+            expect(storageData.length).toBe(0);
+        });
+    });
+
     test.describe('Integration', () => {
         test('full workflow: select color, paint cells, change color, paint more, reset', async ({ page }) => {
             const swatches = page.locator('.pixel-art-creator-palette__swatch');
