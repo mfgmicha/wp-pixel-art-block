@@ -58,35 +58,8 @@ jobs:
             - name: Create Blueprint
               id: blueprint
               run: |
-                  BLUEPRINT=$(cat << 'EOF'
-                  {
-                    "$schema": "https://playground.wordpress.net/blueprint-schema.json",
-                    "landingPage": "/pixel-art/",
-                    "preferredVersions": {
-                      "wp": "latest",
-                      "php": "8.4"
-                    },
-                    "steps": [
-                      {
-                        "step": "installPlugin",
-                        "pluginZipFile": {
-                          "resource": "url",
-                          "url": "${{ steps.get_release.outputs.release-url }}"
-                        }
-                      },
-                      {
-                        "step": "activatePlugin",
-                        "pluginPath": "wp-pixel-art-block/plugin.php"
-                      },
-                      {
-                        "step": "wp-cli",
-                        "command": "wp post create --post_type=page --post_title='Pixel Art' --post_name='pixel-art' --post_content='<!-- wp:mfgmicha/pixel-art-creator /-->' --post_status=publish"
-                      }
-                    ]
-                  }
-                  EOF
-                  )
-                  echo "result=$BLUEPRINT" >> $GITHUB_OUTPUT
+                  RELEASE_URL="${{ steps.get_release.outputs.release-url }}"
+                  echo "result={\"$schema\":\"https://playground.wordpress.net/blueprint-schema.json\",\"landingPage\":\"/pixel-art/\",\"preferredVersions\":{\"wp\":\"latest\",\"php\":\"8.4\"},\"steps\":[{\"step\":\"installPlugin\",\"pluginZipFile\":{\"resource\":\"url\",\"url\":\"$RELEASE_URL\"}},{\"step\":\"activatePlugin\",\"pluginPath\":\"wp-pixel-art-block/plugin.php\"},{\"step\":\"wp-cli\",\"command\":\"wp post create --post_type=page --post_title='Pixel Art' --post_name='pixel-art' --post_content='<!-- wp:mfgmicha/pixel-art-creator /-->' --post_status=publish\"}]}" >> $GITHUB_OUTPUT
 
             - name: Post Playground Preview Button
               uses: WordPress/action-wp-playground-pr-preview@v2
