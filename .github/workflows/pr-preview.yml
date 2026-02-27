@@ -27,16 +27,7 @@ jobs:
               run: npm run build
 
             - name: Create plugin zip
-              run: |
-                  zip -r plugin.zip . \
-                      -x "node_modules/*" \
-                      -x ".git/*" \
-                      -x "tests/*" \
-                      -x "*.md" \
-                      -x "vendor/*" \
-                      -x "*.config.js" \
-                      -x "playwright.config.*" \
-                      -x ".github/*"
+              run: npm run plugin-zip
 
             - name: Upload to release
               uses: softprops/action-gh-release@v2
@@ -45,21 +36,21 @@ jobs:
                   name: PR Preview
                   generate_release_notes: true
                   replace: true
-                  files: plugin.zip
+                  files: pixel-art-creator.zip
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Get release URL
               id: get_release
               run: |
-                  RELEASE_URL="https://github.com/${{ github.repository }}/releases/download/pr-preview-${{ github.event.pull_request.number }}/plugin.zip"
+                  RELEASE_URL="https://github.com/${{ github.repository }}/releases/download/pr-preview-${{ github.event.pull_request.number }}/pixel-art-creator.zip"
                   echo "release-url=$RELEASE_URL" >> $GITHUB_OUTPUT
 
             - name: Create Blueprint
               id: blueprint
               run: |
                   RELEASE_URL="${{ steps.get_release.outputs.release-url }}"
-                  echo "result={\"landingPage\":\"/pixel-art/\",\"preferredVersions\":{\"wp\":\"latest\",\"php\":\"8.4\"},\"steps\":[{\"step\":\"installPlugin\",\"pluginZipFile\":{\"resource\":\"url\",\"url\":\"$RELEASE_URL\"}},{\"step\":\"activatePlugin\",\"pluginPath\":\"wp-pixel-art-block/plugin.php\"},{\"step\":\"wp-cli\",\"command\":\"wp post create --post_type=page --post_title='Pixel Art' --post_name='pixel-art' --post_content='<!-- wp:mfgmicha/pixel-art-creator /-->' --post_status=publish\"}]}" >> $GITHUB_OUTPUT
+                  echo "result={\"landingPage\":\"/pixel-art/\",\"preferredVersions\":{\"wp\":\"latest\",\"php\":\"8.4\"},\"steps\":[{\"step\":\"installPlugin\",\"pluginZipFile\":{\"resource\":\"url\",\"url\":\"$RELEASE_URL\"}},{\"step\":\"activatePlugin\",\"pluginPath\":\"pixel-art-creator/plugin.php\"},{\"step\":\"wp-cli\",\"command\":\"wp post create --post_type=page --post_title='Pixel Art' --post_name='pixel-art' --post_content='<!-- wp:mfgmicha/pixel-art-creator /-->' --post_status=publish\"}]}" >> $GITHUB_OUTPUT
 
             - name: Post Playground Preview Button
               uses: WordPress/action-wp-playground-pr-preview@v2
