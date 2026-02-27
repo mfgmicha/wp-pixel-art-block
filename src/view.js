@@ -141,12 +141,45 @@ const { state } = store( 'mfgmicha/pixel-art-creator', {
 	},
 } );
 
-// Initialize: Add block ID to wrapper and load saved data.
+// Initialize: Add block ID to wrapper, load saved data, and set up drag-to-paint.
 document.addEventListener( 'DOMContentLoaded', () => {
 	const wrapper = document.querySelector( '.wp-block-mfgmicha-pixel-art-creator' );
 	if ( wrapper && state.blockId ) {
 		wrapper.setAttribute( 'data-block-id', state.blockId );
 		// Load saved grid from localStorage.
 		loadFromStorage();
+
+		// Set up drag-to-paint
+		let isMouseDown = false;
+
+		wrapper.addEventListener( 'mousedown', ( e ) => {
+			// Only track if clicking on a cell or within the grid
+			if ( e.target.classList.contains( 'pixel-art-creator-grid__cell' ) ||
+				 e.target.closest( '.pixel-art-creator-grid' ) ) {
+				isMouseDown = true;
+			}
+		} );
+
+		wrapper.addEventListener( 'mouseup', () => {
+			isMouseDown = false;
+		} );
+
+		// Handle mouse leaving the wrapper
+		wrapper.addEventListener( 'mouseleave', () => {
+			isMouseDown = false;
+		} );
+
+		// Add mouseenter handler to cells for drag painting
+		const cells = wrapper.querySelectorAll( '.pixel-art-creator-grid__cell' );
+		cells.forEach( ( cell ) => {
+			cell.addEventListener( 'mouseenter', () => {
+				if ( isMouseDown ) {
+					// Paint the cell while dragging
+					cell.style.backgroundColor = state.activeColor;
+					cell.setAttribute( 'data-cell-color', state.activeColor );
+					saveToStorage();
+				}
+			} );
+		} );
 	}
 } );
