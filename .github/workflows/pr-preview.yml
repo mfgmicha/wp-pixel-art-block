@@ -44,7 +44,7 @@ jobs:
                   tag_name: pr-preview-${{ github.event.pull_request.number }}
                   name: PR Preview
                   generate_release_notes: true
-                  draft: true
+                  replace: true
                   files: plugin.zip
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
