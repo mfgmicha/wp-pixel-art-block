@@ -38,4 +38,4 @@ jobs:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
                   mode: 'append-to-description'
                   plugin-path: .
-                  blueprint: '{"landingPage":"/pixel-art/","preferredVersions":{"wp":"latest","php":"8.4"},"steps":[{"step":"wp-cli","command":"wp post create --post_type=page --post_title='Pixel Art' --post_name='pixel-art' --post_content='<!-- wp:mfgmicha/pixel-art-creator /-->' --post_status=publish"}]}'
+                  blueprint: '{"landingPage":"/pixel-art/","preferredVersions":{"wp":"latest","php":"8.4"},"steps":[{"step":"wp-cli","command":"wp post create --post_type=page --post_title=PixelArt --post_name=pixel-art --post_content=<!--wp:mfgmicha/pixel-art-creator/--> --post_status=publish"}]}'
