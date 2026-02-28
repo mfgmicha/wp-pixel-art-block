@@ -50,7 +50,7 @@ jobs:
         uses: WordPress/action-wp-playground-pr-preview/.github/actions/expose-artifact-on-public-url@v2
         with:
           artifact-name: ${{ steps.pr-metadata.outputs.artifact-name }}
-          artifact-filename: pixel-art-creator.zip
+          artifact-filename: "@mfgmicha/pixel-art-creator.zip"
           pr-number: ${{ steps.pr-metadata.outputs.pr-number }}
           commit-sha: ${{ steps.pr-metadata.outputs.commit-sha }}
           artifact-source-run-id: ${{ github.event.workflow_run.id }}
