@@ -5,7 +5,8 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  test:
+  tests_e2e:
+    name: Run end-to-end tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,5 +25,5 @@ jobs:
       - name: Build plugin
         run: npm run build
 
-      - name: Run tests (cloud)
-        run: npm run test:cloud
+      - name: Run tests
+        run: npx playwright test --config=playwright.config.cloud.js
