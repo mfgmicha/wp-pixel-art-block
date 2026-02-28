@@ -52,16 +52,13 @@ npm run test:ci
 ```
 
 **Option 3: Local Tests**
-Uses wp-playground-cli running locally on port 8890. Note: ES modules have known limitations locally.
+Uses programmatic WordPress Playground - server starts/stops automatically.
 
 ```bash
-# Start the local server
-npm run env:start
-
-# Run tests (in a new terminal)
 npm run test:local
-# Or use: npx playwright test
 ```
+
+Note: ES modules have known limitations locally (use cloud tests for full coverage).
 
 ### Automated PR Previews
 
