@@ -33,19 +33,39 @@ Try the Pixel Art Creator Block instantly in your browser without installing Wor
 
 **[Open in WordPress Playground](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/mfgmicha/wp-pixel-art-block/main/.wordpress/blueprint.json)**
 
-### Local Development Testing
+### Running Tests
 
-For local development with the Playground CLI:
+Three test options are available:
+
+**Option 1: Cloud Tests (recommended for full coverage)**
+Uses the hosted WordPress Playground - supports ES modules for full interactivity testing.
+
+```bash
+npm run test:cloud
+```
+
+**Option 2: CI Tests (build + cloud)**
+Builds the plugin and runs cloud tests in one command.
+
+```bash
+npm run test:ci
+```
+
+**Option 3: Local Tests**
+Uses wp-playground-cli running locally on port 8890. Note: ES modules have known limitations locally.
 
 ```bash
 # Start the local server
 npm run env:start
 
-# Run tests
-npm run test:playwright
+# Run tests (in a new terminal)
+npm run test:local
+# Or use: npx playwright test
 ```
 
-Note: The local CLI has a known limitation with ES modules. For full test coverage, use the hosted Playground link above.
+### Automated PR Previews
+
+Every PR automatically gets a WordPress Playground preview via GitHub Actions. The plugin is built and deployed to a temporary URL where you can test changes before merging.
 
 ## Installation
 

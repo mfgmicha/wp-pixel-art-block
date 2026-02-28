@@ -1,0 +1,37 @@
+name: PR Playground Preview - Build
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+
+permissions:
+  contents: read
+
+jobs:
+  build-plugin-zip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Plugin
+        run: npm run build
+
+      - name: Create plugin zip
+        run: npm run plugin-zip
+
+      - name: Upload plugin zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: pixel-art-plugin-zip-pr${{ github.event.pull_request.number }}-${{ github.event.pull_request.head.sha }}
+          path: "@mfgmicha/pixel-art-creator.zip"
+          if-no-files-found: error

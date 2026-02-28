@@ -1,5 +1,7 @@
 const { defineConfig, devices } = require('@playwright/test');
 
+// Hosted WordPress Playground config
+// Run with: npx playwright test --config=playwright.config.cloud.js
 module.exports = defineConfig({
   testDir: './tests',
   timeout: 30000,
@@ -10,8 +12,7 @@ module.exports = defineConfig({
   retries: 0,
   reporter: 'list',
   use: {
-    //baseURL: 'http://127.0.0.1:8889',
-    baseURL: 'http://127.0.0.1:8890',
+    baseURL: 'https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/mfgmicha/wp-pixel-art-block/main/.wordpress/blueprint.json',
     trace: 'on-first-retry',
     headless: true,
   },
@@ -20,9 +21,6 @@ module.exports = defineConfig({
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
-        launchOptions: {
-          args: ['--disable-proxy-bypass', '--disable-setuid-sandbox'],
-        },
       },
     },
   ],

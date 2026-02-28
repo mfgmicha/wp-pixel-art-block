@@ -16,9 +16,12 @@
 		"test:playwright": "wp-scripts test-playwright",
 		"test:playwright:help": "wp-scripts test-playwright --help",
 		"test:playwright:debug": "wp-scripts test-playwright --debug",
+		"test:local": "npx playwright test --config=playwright.config.local.js",
+		"test:cloud": "npx playwright test --config=playwright.config.cloud.js",
+		"test:ci": "npm run build && npm run test:cloud",
 		"makepot": "make-pot src languages --slug=pixel-art-creator --domain=block --headers=email:michakrapp@gmail.com --headers=\"name:Pixel Art Creator\" --headers=\"version:0.3.0\" --headers=\"author:Micha Krapp\"",
 		"makejson": "make-json build languages --slug=pixel-art-creator",
-		"env:start": "wp-playground-cli start --port 8889 --blueprint ./.wordpress/blueprint.local.json",
+		"env:start": "wp-playground-cli start --port 8890 --blueprint ./.wordpress/blueprint.local.json",
 		"env:stop": "echo 'Server stopped (Ctrl+C)'"
 	},
 	"devDependencies": {
