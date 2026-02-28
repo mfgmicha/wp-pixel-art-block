@@ -27,11 +27,7 @@ jobs:
         run: npm run build
 
       - name: Create plugin zip
-        run: |
-          mkdir -p wp-pixel-art-block
-          cp -r build wp-pixel-art-block/
-          cp plugin.php wp-pixel-art-block/
-          cd wp-pixel-art-block && zip -r ../pixel-art-creator.zip .
+        run: npm run plugin-zip
 
       - name: Upload plugin zip
         uses: actions/upload-artifact@v4
