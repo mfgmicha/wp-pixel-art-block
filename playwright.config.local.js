@@ -1,6 +1,6 @@
 const { defineConfig, devices } = require('@playwright/test');
 
-// Local CLI config - uses wp-playground-cli on port 8890
+// Local Playground config with programmatic server
 // Run with: npm run test:local
 module.exports = defineConfig({
   testDir: './tests',
@@ -27,4 +27,6 @@ module.exports = defineConfig({
       },
     },
   ],
+  globalSetup: require.resolve('./tests/global-setup.js'),
+  globalTeardown: require.resolve('./tests/global-teardown.js'),
 });
