@@ -1,13 +1,57 @@
 import { store, getContext, getElement } from '@wordpress/interactivity';
 
+// Helper to get block ID from the wrapper element.
+// Falls back to generating a random ID if Interactivity API state isn't available.
+const getBlockId = ( wrapper ) => {
+	// First try to get from data attribute (set by Interactivity API)
+	const dataId = wrapper.getAttribute( 'data-wp-context' );
+	if ( dataId ) {
+		try {
+			const ctx = JSON.parse( dataId );
+			if ( ctx && ctx.clientId ) {
+				return ctx.clientId;
+			}
+		} catch ( e ) {
+			// Ignore parse errors
+		}
+	}
+	// Try to get from data-block-id attribute (set below)
+	const blockIdAttr = wrapper.getAttribute( 'data-block-id' );
+	if ( blockIdAttr ) {
+		return blockIdAttr;
+	}
+	// Fallback: generate a unique ID based on wrapper position
+	return 'block-' + Array.from( document.querySelectorAll( '.wp-block-mfgmicha-pixel-art-creator' ) ).indexOf( wrapper );
+};
+
 // Helper to get localStorage key for this block.
-const getStorageKey = () => {
-	return `pixel-art-${ state.blockId }`;
+const getStorageKey = ( blockId ) => {
+	return `pixel-art-${ blockId }`;
+};
+
+// Helper to get the current active color from the DOM or state.
+// Used for drag-to-paint which runs outside of Interactivity API context.
+const getActiveColor = ( wrapper ) => {
+	// First, try to get from the state (if Interactivity API is available)
+	if ( typeof state !== 'undefined' && state.activeColor ) {
+		return state.activeColor;
+	}
+	// Check for active swatch in the palette (added by Interactivity API)
+	const activeSwatch = wrapper.querySelector( '.pixel-art-creator-palette__swatch.is-active' );
+	if ( activeSwatch ) {
+		return activeSwatch.getAttribute( 'data-swatch-color' );
+	}
+	// Fallback: get first swatch color
+	const firstSwatch = wrapper.querySelector( '.pixel-art-creator-palette__swatch' );
+	if ( firstSwatch ) {
+		return firstSwatch.getAttribute( 'data-swatch-color' );
+	}
+	return '#000000';
 };
 
 // Helper to save grid to localStorage.
-const saveToStorage = () => {
-	const wrapper = document.querySelector( `.wp-block-mfgmicha-pixel-art-creator[data-block-id="${ state.blockId }"]` );
+const saveToStorage = ( blockId ) => {
+	const wrapper = document.querySelector( `.wp-block-mfgmicha-pixel-art-creator[data-block-id="${ blockId }"]` );
 	if ( ! wrapper ) {
 		return;
 	}
@@ -20,21 +64,21 @@ const saveToStorage = () => {
 		}
 	} );
 	try {
-		localStorage.setItem( getStorageKey(), JSON.stringify( gridData ) );
+		localStorage.setItem( getStorageKey( blockId ), JSON.stringify( gridData ) );
 	} catch ( e ) {
 		console.warn( 'Could not save to localStorage:', e );
 	}
 };
 
 // Helper to load grid from localStorage.
-const loadFromStorage = () => {
+const loadFromStorage = ( blockId ) => {
 	try {
-		const saved = localStorage.getItem( getStorageKey() );
+		const saved = localStorage.getItem( getStorageKey( blockId ) );
 		if ( ! saved ) {
 			return;
 		}
 		const gridData = JSON.parse( saved );
-		const wrapper = document.querySelector( `.wp-block-mfgmicha-pixel-art-creator[data-block-id="${ state.blockId }"]` );
+		const wrapper = document.querySelector( `.wp-block-mfgmicha-pixel-art-creator[data-block-id="${ blockId }"]` );
 		if ( ! wrapper ) {
 			return;
 		}
@@ -88,7 +132,11 @@ const { state } = store( 'mfgmicha/pixel-art-creator', {
 				ref.setAttribute( 'data-cell-color', state.activeColor );
 			}
 			// Save to localStorage after painting.
-			saveToStorage();
+			const wrapper = ref.closest( '.wp-block-mfgmicha-pixel-art-creator' );
+			const blockId = wrapper ? getBlockId( wrapper ) : null;
+			if ( blockId ) {
+				saveToStorage( blockId );
+			}
 		},
 		handleCellKeydown( event ) {
 			if ( event.key === 'Enter' || event.key === ' ' ) {
@@ -106,7 +154,11 @@ const { state } = store( 'mfgmicha/pixel-art-creator', {
 					ref.setAttribute( 'data-cell-color', state.activeColor );
 				}
 				// Save to localStorage after painting.
-				saveToStorage();
+				const wrapper = ref.closest( '.wp-block-mfgmicha-pixel-art-creator' );
+				const blockId = wrapper ? getBlockId( wrapper ) : null;
+				if ( blockId ) {
+					saveToStorage( blockId );
+				}
 			}
 		},
 		resetGrid() {
@@ -118,6 +170,7 @@ const { state } = store( 'mfgmicha/pixel-art-creator', {
 			if ( ! wrapper ) {
 				return;
 			}
+			const blockId = getBlockId( wrapper );
 			const cells = wrapper.querySelectorAll( '.pixel-art-creator-grid__cell' );
 			for ( let i = 0; i < cells.length; i++ ) {
 				cells[ i ].style.backgroundColor = '#fff';
@@ -125,7 +178,7 @@ const { state } = store( 'mfgmicha/pixel-art-creator', {
 			}
 			// Clear localStorage on reset.
 			try {
-				localStorage.removeItem( getStorageKey() );
+				localStorage.removeItem( getStorageKey( blockId ) );
 			} catch ( e ) {
 				console.warn( 'Could not clear localStorage:', e );
 			}
@@ -133,47 +186,19 @@ const { state } = store( 'mfgmicha/pixel-art-creator', {
 	},
 } );
 
-// Wait for the Interactivity API state to be available.
-const waitForState = () => {
-	return new Promise( ( resolve, reject ) => {
-		const maxAttempts = 100; // Max 1 second (100 * 10ms)
-		let attempts = 0;
-		const check = () => {
-			attempts++;
-			// Check if state.blockId is available
-			if ( state.blockId ) {
-				resolve( state.blockId );
-			} else if ( attempts >= maxAttempts ) {
-				// Timeout after 1 second - Interactivity API may not be available
-				console.warn( 'Pixel Art: Interactivity state not available' );
-				reject( new Error( 'State timeout' ) );
-			} else {
-				// Retry after a short delay
-				setTimeout( check, 10 );
-			}
-		};
-		check();
-	} );
-};
-
 // Initialize: Add block ID to wrapper, load saved data, and set up drag-to-paint.
-document.addEventListener( 'DOMContentLoaded', async () => {
+document.addEventListener( 'DOMContentLoaded', () => {
 	const wrapper = document.querySelector( '.wp-block-mfgmicha-pixel-art-creator' );
 	if ( ! wrapper ) {
 		return;
 	}
 
-	// Wait for state.blockId to be available (Interactivity API loads asynchronously)
-	let blockId;
-	try {
-		blockId = await waitForState();
-		wrapper.setAttribute( 'data-block-id', blockId );
-		// Load saved grid from localStorage.
-		loadFromStorage();
-	} catch ( e ) {
-		// Interactivity API not available, skip localStorage and drag-to-paint
-		return;
-	}
+	// Get block ID from the wrapper using our helper
+	const blockId = getBlockId( wrapper );
+	wrapper.setAttribute( 'data-block-id', blockId );
+
+	// Load saved grid from localStorage
+	loadFromStorage( blockId );
 
 	// Set up drag-to-paint
 	let isMouseDown = false;
@@ -200,10 +225,12 @@ document.addEventListener( 'DOMContentLoaded', async () => {
 	cells.forEach( ( cell ) => {
 		cell.addEventListener( 'mouseenter', () => {
 			if ( isMouseDown ) {
+				// Get the current active color from the DOM
+				const activeColor = getActiveColor( wrapper );
 				// Paint the cell while dragging
-				cell.style.backgroundColor = state.activeColor;
-				cell.setAttribute( 'data-cell-color', state.activeColor );
-				saveToStorage();
+				cell.style.backgroundColor = activeColor;
+				cell.setAttribute( 'data-cell-color', activeColor );
+				saveToStorage( blockId );
 			}
 		} );
 	} );

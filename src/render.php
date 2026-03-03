@@ -77,7 +77,7 @@ wp_interactivity_state(
 <div
 	<?php echo get_block_wrapper_attributes(); ?>
 	data-wp-interactive="mfgmicha/pixel-art-creator"
-	<?php echo wp_interactivity_data_wp_context( array( 'activeColor' => $first_color ) ); ?>
+	<?php echo wp_interactivity_data_wp_context( array( 'activeColor' => $first_color, 'clientId' => $block->client_id ) ); ?>
 >
 
 	<!-- Palette swatches. -->

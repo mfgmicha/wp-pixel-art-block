@@ -31,7 +31,7 @@ async function startPlaygroundServer() {
         {
           step: "wp-cli",
           command:
-            "wp post create --post_type=page --post_title=PixelArt --post_name=pixel-art --post_content='<!-- wp:mfgmicha/pixel-art-creator /-->' --post_status=publish",
+            "wp post create --post_type=page --post_title='Pixel Art' --post_name=pixel-art --post_content='<!-- wp:mfgmicha/pixel-art-creator /-->' --post_status=publish",
         },
       ],
     },
