@@ -33,8 +33,7 @@ wp-pixel-art-block/
 │   ├── global-setup.js
 │   └── global-teardown.js
 ├── .wordpress/            # WordPress Playground blueprint
-├── playwright.config.local.js
-├── playwright.config.cloud.js
+├── playwright.config.js
 └── plugin.php             # WordPress plugin entry
 ```
 
@@ -48,10 +47,12 @@ npm run build      # Production build
 
 ### Testing
 ```bash
-npm run test:local   # Local programmatic WordPress Playground
-npm run test:cloud   # Hosted WordPress Playground (recommended for full ESM support)
+npm test         # Local programmatic WordPress Playground (default)
+npm run test:cloud   # Hosted WordPress Playground
 npm run test:ci      # Build + cloud tests (used in CI)
 ```
+
+Note: Uses unified `playwright.config.js` with `TEST_MODE` env variable.
 
 ### Other
 ```bash
