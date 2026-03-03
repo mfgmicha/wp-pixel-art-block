@@ -10,6 +10,7 @@ test.describe('Frontend Pixel Art Block', () => {
         });
         // Navigate - fail fast if server not available
         await page.goto('/pixel-art/', { timeout: 15000 });
+        await page.waitForLoadState('networkidle');
     });
 
     test('page loads without critical errors', async ({ page }) => {

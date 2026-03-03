@@ -105,6 +105,6 @@ jobs:
           ARTIFACT_URL: ${{ steps.expose.outputs.artifact-url }}
 
       - name: Run tests
-        run: npx playwright test --config=playwright.config.cloud.js
+        run: npm run test:cloud
         env:
           PLAYWRIGHT_BLUEPRINT_URL: ${{ steps.blueprint.outputs.blueprint }}

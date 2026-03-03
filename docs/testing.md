@@ -30,7 +30,7 @@ npm run test:ci
 Uses the programmatic WordPress Playground API - server starts/stops automatically.
 
 ```bash
-npm run test:local
+npm test
 ```
 
 **Note:** Local tests have a known limitation with ES modules (see Troubleshooting below).
@@ -39,10 +39,10 @@ npm run test:local
 
 ```bash
 # Frontend tests
-npm run test:local -- tests/frontend.spec.js
+npm test -- tests/frontend.spec.js
 
 # Admin tests
-npm run test:local -- tests/admin.spec.js
+npm test -- tests/admin.spec.js
 ```
 
 ## Test Files
@@ -69,12 +69,13 @@ npm run test:cloud
 
 ## Configuration
 
-### Playwright Configs
+### Playwright Config
 
-Two configuration files are available:
+A single unified configuration is used: `playwright.config.js`
 
-- `playwright.config.cloud.js` - Hosted WordPress Playground
-- `playwright.config.local.js` - Local programmatic server
+It uses the `TEST_MODE` environment variable to switch between modes:
+- Not set (default) - Local programmatic WordPress Playground
+- `TEST_MODE=cloud` - Hosted WordPress Playground
 
 ### Blueprint
 
