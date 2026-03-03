@@ -204,9 +204,16 @@ document.addEventListener( 'DOMContentLoaded', () => {
 	let isMouseDown = false;
 
 	wrapper.addEventListener( 'mousedown', ( e ) => {
-		// Only track if clicking on a cell or within the grid
-		if ( e.target.classList.contains( 'pixel-art-creator-grid__cell' ) ||
-			 e.target.closest( '.pixel-art-creator-grid' ) ) {
+		const cell = e.target.classList.contains( 'pixel-art-creator-grid__cell' ) ? e.target : null;
+		// Paint the cell immediately on mousedown
+		if ( cell ) {
+			const activeColor = getActiveColor( wrapper );
+			cell.style.backgroundColor = activeColor;
+			cell.setAttribute( 'data-cell-color', activeColor );
+			saveToStorage( blockId );
+		}
+		// Track dragging state
+		if ( cell || e.target.closest( '.pixel-art-creator-grid' ) ) {
 			isMouseDown = true;
 		}
 	} );
