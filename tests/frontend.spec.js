@@ -114,6 +114,31 @@ test.describe('Frontend Pixel Art Block', () => {
             expect(cellColor).toBeTruthy();
         });
 
+        test('drag to paint paints multiple cells', async ({ page }) => {
+            // First ensure a color is selected from palette
+            const swatches = page.locator('.pixel-art-creator-palette__swatch');
+            if (await swatches.count() > 0) {
+                await swatches.first().click();
+            }
+            await page.waitForTimeout(100);
+
+            // Get first two cells
+            const firstCell = page.locator('.pixel-art-creator-grid__cell').nth(0);
+            const secondCell = page.locator('.pixel-art-creator-grid__cell').nth(1);
+
+            // Click and hold on first cell, then hover to second cell
+            await firstCell.dispatchEvent('mousedown');
+            await secondCell.dispatchEvent('mouseenter');
+            await page.waitForTimeout(100);
+
+            // Verify both cells are painted
+            const firstCellColor = await firstCell.getAttribute('data-cell-color');
+            const secondCellColor = await secondCell.getAttribute('data-cell-color');
+
+            expect(firstCellColor).toBeTruthy();
+            expect(secondCellColor).toBeTruthy();
+        });
+
         test('keyboard accessibility - Enter key paints cell', async ({ page }) => {
             const firstCell = page.locator('.pixel-art-creator-grid__cell').first();
 
