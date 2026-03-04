@@ -68,12 +68,19 @@ npm run plugin-zip      # Create plugin zip
 - Cloud tests use the hosted WordPress Playground which supports ES modules
 - Tests run against a live WordPress instance via Playwright
 
+## Interactivity API
+
+The block uses WordPress Interactivity API for frontend interactions. Key files:
+- `src/view.js` - Store setup with state and actions
+- `src/render.php` - Directives like `data-wp-on--click`, `data-wp-on--mousedown`, `data-wp-on--mouseenter`
+
 ## Block Features
 
 - Configurable grid size (4-32 columns/rows via sidebar)
 - Uses theme's color palette (falls back to default colors)
 - Click to paint cells
 - Click painted cell with same color to erase
+- Drag to paint multiple cells
 - Reset button to clear canvas
 - Fully responsive (horizontal scroll on small screens)
 - Pure client-side (no server storage)
