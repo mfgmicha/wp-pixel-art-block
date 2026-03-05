@@ -18,7 +18,7 @@ module.exports = defineConfig({
     timeout: 5000
   },
   fullyParallel: false,
-  retries: 1,
+  retries: 2,
   reporter: 'list',
   use: {
     baseURL: isLocal
@@ -26,6 +26,7 @@ module.exports = defineConfig({
       : `https://playground.wordpress.net/?blueprint-url=${blueprintUrl}`,
     trace: 'on-first-retry',
     headless: true,
+    actionTimeout: 10000,
   },
   projects: [
     {

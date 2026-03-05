@@ -11,7 +11,7 @@ This document describes how to run tests for the Pixel Art Creator block.
 
 ### Option 1: Cloud Tests (recommended)
 
-Uses the hosted WordPress Playground - supports ES modules for full interactivity testing.
+Uses the hosted WordPress Playground - supports full interactivity testing.
 
 ```bash
 npm run test:cloud
@@ -33,7 +33,7 @@ Uses the programmatic WordPress Playground API - server starts/stops automatical
 npm test
 ```
 
-**Note:** Local tests have a known limitation with ES modules (see Troubleshooting below).
+**Note:** Local tests may have issues with Interactivity API (see Troubleshooting below).
 
 ### Run Specific Test Files
 
@@ -53,15 +53,9 @@ npm test -- tests/admin.spec.js
 
 ## Troubleshooting
 
-### ES Module errors in local tests
+### Interactivity API in local tests
 
-The `@wp-playground/cli` has a known bug where ES modules are not served with the correct MIME type. This causes errors like:
-
-```
-Failed to load module script: Expected a JavaScript-or-Wash module script but the server responded with a MIME type of ""
-```
-
-If you see these errors, the JavaScript interaction tests will fail. Use cloud tests instead for full coverage:
+Local WordPress Playground may have issues loading the Interactivity API due to module loading. If JavaScript interaction tests fail, use cloud tests for full coverage:
 
 ```bash
 npm run test:cloud
