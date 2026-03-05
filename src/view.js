@@ -88,7 +88,7 @@ const { state } = store( 'mfgmicha/pixel-art-creator', {
 		},
 		// Drag state
 		isDragging: false,
-		hasDragged: false,
+		justPainted: false,
 	},
 	actions: {
 		selectColor() {
@@ -107,7 +107,7 @@ const { state } = store( 'mfgmicha/pixel-art-creator', {
 			if ( ! ref ) {
 				return;
 			}
-			// Paint the cell immediately
+			// Paint the cell (or repaint if already painted with different color)
 			ref.style.backgroundColor = state.activeColor;
 			ref.setAttribute( 'data-cell-color', state.activeColor );
 			// Save to localStorage
@@ -118,7 +118,9 @@ const { state } = store( 'mfgmicha/pixel-art-creator', {
 			}
 			// Set drag state
 			state.isDragging = true;
-			state.hasDragged = false;
+			// Set justPainted if this was an empty cell
+			const currentColor = ref.getAttribute( 'data-cell-color' ) || '';
+			state.justPainted = ( currentColor === state.activeColor );
 		},
 		// Continue drag: paints cell if dragging
 		dragPaint() {
@@ -132,8 +134,7 @@ const { state } = store( 'mfgmicha/pixel-art-creator', {
 			// Paint the cell
 			ref.style.backgroundColor = state.activeColor;
 			ref.setAttribute( 'data-cell-color', state.activeColor );
-			// Mark that we dragged
-			state.hasDragged = true;
+			state.justPainted = false; // Clear the flag since we're now dragging
 			// Save to localStorage
 			const wrapper = ref.closest( '.wp-block-mfgmicha-pixel-art-creator' );
 			const blockId = wrapper ? getBlockId( wrapper ) : null;
@@ -144,13 +145,16 @@ const { state } = store( 'mfgmicha/pixel-art-creator', {
 		// Stop drag: resets drag state
 		stopDragging() {
 			state.isDragging = false;
-			state.hasDragged = false;
+			// Don't clear justPainted here - let paintCell handle it
 		},
 		paintCell() {
-			// If hasDragged is true, it was a drag - don't toggle, just paint
-			if ( state.hasDragged ) {
-				// Already painted by dragPaint, just reset hasDragged
-				state.hasDragged = false;
+			// If justPainted is true, it was painted by mousedown - clear flag but don't toggle
+			if ( state.justPainted ) {
+				state.justPainted = false;
+				return;
+			}
+			// If isDragging is true, we're in a drag operation - don't toggle
+			if ( state.isDragging ) {
 				return;
 			}
 			const { ref } = getElement();
