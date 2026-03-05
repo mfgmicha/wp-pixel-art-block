@@ -7,6 +7,7 @@
 	"main": "build/index.js",
 	"scripts": {
 		"start": "wp-scripts start --experimental-modules",
+		"playground": "wp-playground start --blueprint .wordpress/blueprint.json",
 		"build": "wp-scripts build --experimental-modules",
 		"format": "wp-scripts format",
 		"lint:css": "wp-scripts lint-style",
