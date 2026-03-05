@@ -238,8 +238,8 @@ const { state } = store( 'vendor/block-name', {
 - Configurable grid size (4-32 columns/rows via sidebar)
 - Uses theme's color palette (falls back to default colors)
 - Click to paint cells
-- Click painted cell with same color to erase
 - Drag to paint multiple cells
+- Select white color to erase
 - Reset button to clear canvas
 - Fully responsive (horizontal scroll on small screens)
 - Pure client-side (no server storage)
