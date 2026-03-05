@@ -110,13 +110,18 @@ wp_interactivity_state(
 	?>
 
 	<div class="pixel-art-creator-grid-wrapper">
-		<div class="pixel-art-creator-grid" style="<?php echo esc_attr( $grid_style ); ?>">
+		<div class="pixel-art-creator-grid"
+			style="<?php echo esc_attr( $grid_style ); ?>"
+			data-wp-on--mouseup="actions.stopDragging"
+			data-wp-on--mouseleave="actions.stopDragging">
 			<?php
 			for ( $i = 0; $i < $total_cells; $i++ ) {
 				echo '<div class="pixel-art-creator-grid__cell"'
 					. ' role="button" tabindex="0"'
 					. ' aria-label="' . esc_attr( 'Pixel ' . ( $i + 1 ) ) . '"'
 					. ' data-cell-color=""'
+					. ' data-wp-on--mousedown="actions.startDragging"'
+					. ' data-wp-on--mouseenter="actions.dragPaint"'
 					. ' data-wp-on--click="actions.paintCell"'
 					. ' data-wp-on--keydown="actions.handleCellKeydown"'
 					. '></div>';

@@ -29,26 +29,6 @@ const getStorageKey = ( blockId ) => {
 	return `pixel-art-${ blockId }`;
 };
 
-// Helper to get the current active color from the DOM or state.
-// Used for drag-to-paint which runs outside of Interactivity API context.
-const getActiveColor = ( wrapper ) => {
-	// First, try to get from the state (if Interactivity API is available)
-	if ( typeof state !== 'undefined' && state.activeColor ) {
-		return state.activeColor;
-	}
-	// Check for active swatch in the palette (added by Interactivity API)
-	const activeSwatch = wrapper.querySelector( '.pixel-art-creator-palette__swatch.is-active' );
-	if ( activeSwatch ) {
-		return activeSwatch.getAttribute( 'data-swatch-color' );
-	}
-	// Fallback: get first swatch color
-	const firstSwatch = wrapper.querySelector( '.pixel-art-creator-palette__swatch' );
-	if ( firstSwatch ) {
-		return firstSwatch.getAttribute( 'data-swatch-color' );
-	}
-	return '#000000';
-};
-
 // Helper to save grid to localStorage.
 const saveToStorage = ( blockId ) => {
 	const wrapper = document.querySelector( `.wp-block-mfgmicha-pixel-art-creator[data-block-id="${ blockId }"]` );
@@ -106,6 +86,9 @@ const { state } = store( 'mfgmicha/pixel-art-creator', {
 			return swatchColor && state.activeColor &&
 				swatchColor.toLowerCase() === state.activeColor.toLowerCase();
 		},
+		// Drag state
+		isDragging: false,
+		hasDragged: false,
 	},
 	actions: {
 		selectColor() {
@@ -118,7 +101,58 @@ const { state } = store( 'mfgmicha/pixel-art-creator', {
 				state.selectedColor = color;
 			}
 		},
+		// Start drag: paints cell and sets drag state
+		startDragging() {
+			const { ref } = getElement();
+			if ( ! ref ) {
+				return;
+			}
+			// Paint the cell immediately
+			ref.style.backgroundColor = state.activeColor;
+			ref.setAttribute( 'data-cell-color', state.activeColor );
+			// Save to localStorage
+			const wrapper = ref.closest( '.wp-block-mfgmicha-pixel-art-creator' );
+			const blockId = wrapper ? getBlockId( wrapper ) : null;
+			if ( blockId ) {
+				saveToStorage( blockId );
+			}
+			// Set drag state
+			state.isDragging = true;
+			state.hasDragged = false;
+		},
+		// Continue drag: paints cell if dragging
+		dragPaint() {
+			if ( ! state.isDragging ) {
+				return;
+			}
+			const { ref } = getElement();
+			if ( ! ref ) {
+				return;
+			}
+			// Paint the cell
+			ref.style.backgroundColor = state.activeColor;
+			ref.setAttribute( 'data-cell-color', state.activeColor );
+			// Mark that we dragged
+			state.hasDragged = true;
+			// Save to localStorage
+			const wrapper = ref.closest( '.wp-block-mfgmicha-pixel-art-creator' );
+			const blockId = wrapper ? getBlockId( wrapper ) : null;
+			if ( blockId ) {
+				saveToStorage( blockId );
+			}
+		},
+		// Stop drag: resets drag state
+		stopDragging() {
+			state.isDragging = false;
+			state.hasDragged = false;
+		},
 		paintCell() {
+			// If hasDragged is true, it was a drag - don't toggle, just paint
+			if ( state.hasDragged ) {
+				// Already painted by dragPaint, just reset hasDragged
+				state.hasDragged = false;
+				return;
+			}
 			const { ref } = getElement();
 			if ( ! ref ) {
 				return;
@@ -186,7 +220,8 @@ const { state } = store( 'mfgmicha/pixel-art-creator', {
 	},
 } );
 
-// Initialize: Add block ID to wrapper, load saved data, and set up drag-to-paint.
+// Initialize: Add block ID to wrapper and load saved data.
+// Drag-to-paint is now handled by Interactivity API directives.
 document.addEventListener( 'DOMContentLoaded', () => {
 	const wrapper = document.querySelector( '.wp-block-mfgmicha-pixel-art-creator' );
 	if ( ! wrapper ) {
@@ -199,46 +234,4 @@ document.addEventListener( 'DOMContentLoaded', () => {
 
 	// Load saved grid from localStorage
 	loadFromStorage( blockId );
-
-	// Set up drag-to-paint
-	let isMouseDown = false;
-
-	wrapper.addEventListener( 'mousedown', ( e ) => {
-		const cell = e.target.classList.contains( 'pixel-art-creator-grid__cell' ) ? e.target : null;
-		// Paint the cell immediately on mousedown
-		if ( cell ) {
-			const activeColor = getActiveColor( wrapper );
-			cell.style.backgroundColor = activeColor;
-			cell.setAttribute( 'data-cell-color', activeColor );
-			saveToStorage( blockId );
-		}
-		// Track dragging state
-		if ( cell || e.target.closest( '.pixel-art-creator-grid' ) ) {
-			isMouseDown = true;
-		}
-	} );
-
-	wrapper.addEventListener( 'mouseup', () => {
-		isMouseDown = false;
-	} );
-
-	// Handle mouse leaving the wrapper
-	wrapper.addEventListener( 'mouseleave', () => {
-		isMouseDown = false;
-	} );
-
-	// Add mouseenter handler to cells for drag painting
-	const cells = wrapper.querySelectorAll( '.pixel-art-creator-grid__cell' );
-	cells.forEach( ( cell ) => {
-		cell.addEventListener( 'mouseenter', () => {
-			if ( isMouseDown ) {
-				// Get the current active color from the DOM
-				const activeColor = getActiveColor( wrapper );
-				// Paint the cell while dragging
-				cell.style.backgroundColor = activeColor;
-				cell.setAttribute( 'data-cell-color', activeColor );
-				saveToStorage( blockId );
-			}
-		} );
-	} );
 } );
