@@ -102,8 +102,6 @@ npm run makepot    # Generate translation template
 
 ## Testing Notes
 
-- ES modules have known limitations with local WordPress Playground - use `test:cloud` for full interactivity testing
-- Cloud tests use the hosted WordPress Playground which supports ES modules
 - Tests run against a live WordPress instance via Playwright
 
 ## Interactivity API

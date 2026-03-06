@@ -10,39 +10,51 @@ const projectRoot = path.resolve(__dirname, "..");
 async function startPlaygroundServer() {
   console.log("Starting WordPress Playground...");
 
-  const server = await runCLI({
-    command: "server",
-    php: "8.4",
-    wp: "latest",
-    port: 8890,
-    mount: [
-      {
-        hostPath: projectRoot,
-        vfsPath: "/wordpress/wp-content/plugins/wp-pixel-art-block",
-      },
-    ],
-    blueprint: {
-      preferredVersions: { wp: "latest", php: "8.4" },
-      steps: [
+  let server;
+  try {
+    server = await runCLI({
+      command: "server",
+      php: "8.4",
+      wp: "latest",
+      port: 8890,
+      mount: [
         {
-          step: "activatePlugin",
-          pluginPath: "wp-pixel-art-block/plugin.php",
-        },
-        {
-          step: "wp-cli",
-          command:
-            "wp post create --post_type=page --post_title='Pixel Art' --post_name=pixel-art --post_content='<!-- wp:mfgmicha/pixel-art-creator /-->' --post_status=publish",
+          hostPath: projectRoot,
+          vfsPath: "/wordpress/wp-content/plugins/wp-pixel-art-block",
         },
       ],
-    },
-  });
+      blueprint: {
+        preferredVersions: { wp: "latest", php: "8.4" },
+        steps: [
+          {
+            step: "activatePlugin",
+            pluginPath: "wp-pixel-art-block/plugin.php",
+          },
+          {
+            step: "wp-cli",
+            command:
+              "wp post create --post_type=page --post_title='Pixel Art' --post_name=pixel-art --post_content='<!-- wp:mfgmicha/pixel-art-creator /-->' --post_status=publish",
+          },
+        ],
+      },
+    });
+  } catch ( e ) {
+    console.error( "Failed to start Playground:", e.message );
+    throw e;
+  }
 
   console.log(`Playground started at ${server.url}`);
 
   return {
     close: async () => {
       console.log("Stopping WordPress Playground...");
-      await server.close();
+      try {
+        if ( server.close ) {
+          await server.close();
+        }
+      } catch ( e ) {
+        console.warn( "Error closing server:", e.message );
+      }
     },
     url: server.url,
   };
