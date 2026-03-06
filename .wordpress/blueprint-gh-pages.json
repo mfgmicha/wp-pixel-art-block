@@ -33,6 +33,11 @@
 			"pluginPath": "simply-static/simply-static.php"
 		},
 		{
+			"step": "writeFile",
+			"path": "/wordpress/wp-content/mu-plugins/export-static-site.php",
+			"data": "<?php\nfunction export_static_site( $export_path ) {\n    $static = new \\Simply_Static\\Exporter();\n    $static->fetch_urls();\n    $static->create_static_files();\n    $static->create_zip( $export_path );\n}\n"
+		},
+		{
 			"step": "runPHP",
 			"code": "<?php\nrequire '/wordpress/wp-load.php';\n\n$settings = array(\n    'destination_url' => 'relative',\n    'relative_path' => '/wp-pixel-art-block',\n    'additional_urls' => array(),\n    'exclude_urls' => array(\n        site_url( '/wp-admin/' ),\n        site_url( '/wp-login.php' ),\n    ),\n    'include_extras' => array( 'wp-css', 'wp-js' ),\n    'force_inline_css' => true,\n);\n\n$simply_static = \\Simply_Static\\Options::instance();\nforeach ( $settings as $key => $value ) {\n    $simply_static->set( $key, $value );\n}\n$simply_static->save();\n\nexport_static_site( '/output/export.zip' );"
 		}
