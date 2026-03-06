@@ -63,15 +63,12 @@ jobs:
           name: pixel-art-plugin-zip-pr${{ needs.build.outputs.pr-number }}-${{ needs.build.outputs.commit-sha }}
           path: .
 
-      - name: Expose built artifact
-        id: expose
-        uses: WordPress/action-wp-playground-pr-preview/.github/actions/expose-artifact-on-public-url@v2
-        with:
-          artifact-name: pixel-art-plugin-zip-pr${{ needs.build.outputs.pr-number }}-${{ needs.build.outputs.commit-sha }}
-          artifact-filename: pixel-art-creator.zip
-          pr-number: ${{ needs.build.outputs.pr-number }}
-          commit-sha: ${{ needs.build.outputs.commit-sha }}
-          artifacts-to-keep: '2'
+      - name: Upload to release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mv pixel-art-creator.zip pixel-art-creator-pr${{ needs.build.outputs.pr-number }}-${{ needs.build.outputs.commit-sha }}.zip
+          gh release upload ci-artifacts pixel-art-creator-pr${{ needs.build.outputs.pr-number }}-${{ needs.build.outputs.commit-sha }}.zip --force
 
       - name: Publish release
         run: gh release edit ci-artifacts --draft=false
@@ -82,10 +79,9 @@ jobs:
         id: blueprint
         run: |
           node - <<'NODE' >> "$GITHUB_OUTPUT"
-          const url = process.env.ARTIFACT_URL;
-          if (!url) {
-            throw new Error('ARTIFACT_URL is required');
-          }
+          const prNumber = "${{ needs.build.outputs.pr-number }}";
+          const commitSha = "${{ needs.build.outputs.commit-sha }}";
+          const url = `https://github.com/mfgmicha/wp-pixel-art-block/releases/download/ci-artifacts/pixel-art-creator-pr${prNumber}-${commitSha}.zip`;
           const blueprint = {
             landingPage: "/pixel-art/",
             preferredVersions: {wp: "latest", php: "8.4"},
