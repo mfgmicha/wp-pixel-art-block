@@ -15,8 +15,16 @@
 			"command": "wp post create --post_type=page --post_title='Pixel Art Demo' --post_name='pixel-art' --post_content='<!-- wp:mfgmicha/pixel-art-creator /-->' --post_status=publish"
 		},
 		{
+			"step": "wp-cli",
+			"command": "wp option update show_on_front page"
+		},
+		{
+			"step": "wp-cli",
+			"command": "wp option update page_on_front $(wp post list --post_type=page --name=pixel-art --field=ID --format=ids)"
+		},
+		{
 			"step": "runPHP",
-			"code": "<?php\nrequire '/wordpress/wp-load.php';\n\n$page = get_page_by_path('pixel-art');\nif (!$page) {\n    die('Page not found');\n}\n\n$content = apply_filters('the_content', $page->post_content);\n\n$html = '<!DOCTYPE html>' . \"\\n\";\n$html .= '<html lang=\"en\">' . \"\\n\";\n$html .= '<head>' . \"\\n\";\n$html .= '<meta charset=\"UTF-8\">' . \"\\n\";\n$html .= '<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">' . \"\\n\";\n$html .= '<title>Pixel Art Demo</title>' . \"\\n\";\n$html .= '<style>' . \"\\n\";\n$html .= 'body { font-family: system-ui, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }' . \"\\n\";\n$html .= '.wp-block-mfgmicha-pixel-art-creator { margin: 20px 0; }' . \"\\n\";\n$html .= '</style>' . \"\\n\";\n$html .= '</head>' . \"\\n\";\n$html .= '<body>' . \"\\n\";\n$html .= '<h1>Pixel Art Demo</h1>' . \"\\n\";\n$html .= $content . \"\\n\";\n$html .= '</body>' . \"\\n\";\n$html .= '</html>' . \"\\n\";\n\nfile_put_contents('/output/index.html', $html);\necho 'Done!';\n"
+			"code": "<?php\nrequire '/wordpress/wp-load.php';\n\ndefine('WP_USE_THEMES', true);\n\nob_start();\nwp();\n$html = ob_get_clean();\n\nfile_put_contents('/output/index.html', $html);\necho 'Done!';\n"
 		}
 	]
 }
