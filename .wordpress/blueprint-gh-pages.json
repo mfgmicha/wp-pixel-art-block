@@ -1,6 +1,6 @@
 {
 	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
-	"landingPage": "/wp-pixel-art-block/",
+	"landingPage": "/pixel-art/",
 	"preferredVersions": {
 		"wp": "latest",
 		"php": "8.4"
@@ -15,16 +15,8 @@
 			"command": "wp post create --post_type=page --post_title='Pixel Art Demo' --post_name='pixel-art' --post_content='<!-- wp:mfgmicha/pixel-art-creator /-->' --post_status=publish"
 		},
 		{
-			"step": "wp-cli",
-			"command": "wp option update show_on_front page"
-		},
-		{
-			"step": "wp-cli",
-			"command": "wp option update page_on_front $(wp post list --post_type=page --name=pixel-art --field=ID --format=ids)"
-		},
-		{
 			"step": "runPHP",
-			"code": "<?php\nrequire '/wordpress/wp-load.php';\n\ndefine('WP_USE_THEMES', true);\n\nob_start();\nwp();\n$html = ob_get_clean();\n\nfile_put_contents('/output/index.html', $html);\necho 'Done!';\n"
+			"code": "<?php\nrequire '/wordpress/wp-load.php';\n\n$page = get_page_by_path('pixel-art');\nif (!$page) {\n    die('Page not found');\n}\n\n$content = apply_filters('the_content', $page->post_content);\n$styles = wp_styles();\n$scripts = wp_scripts();\n\nob_start();\n?><!DOCTYPE html>\n<html <?php language_attributes(); ?>>\n<head>\n    <meta charset=\"<?php bloginfo('charset'); ?>\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    <title><?php echo get_the_title($page->ID); ?></title>\n    <?php\n    wp_enqueue_scripts();\n    wp_print_styles();\n    wp_print_head_scripts();\n    ?>\n    <style>\n    body { font-family: system-ui, -apple-system, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }\n    .wp-block-mfgmicha-pixel-art-creator { margin: 20px 0; }\n    </style>\n</head>\n<body <?php body_class(); ?>>\n    <h1><?php echo get_the_title($page->ID); ?></h1>\n    <?php echo $content; ?>\n    <?php wp_print_footer_scripts(); ?>\n</body>\n</html>\n<?php\n$html = ob_get_clean();\n\nfile_put_contents('/output/index.html', $html);\necho 'Done!';\n"
 		}
 	]
 }
