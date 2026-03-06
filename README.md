@@ -1,5 +1,11 @@
 # Pixel Art Creator
 
+[![Tests](https://github.com/mfgmicha/wp-pixel-art-block/actions/workflows/pr-tests.yml/badge.svg)](https://github.com/mfgmicha/wp-pixel-art-block/actions/workflows/pr-tests.yml) 
+
+[![Deploy to GitHub Pages](https://github.com/mfgmicha/wp-pixel-art-block/actions/workflows/gh-pages.yml/badge.svg)](https://github.com/mfgmicha/wp-pixel-art-block/actions/workflows/gh-pages.yml)
+
+[![PR Playground Preview](https://github.com/mfgmicha/wp-pixel-art-block/actions/workflows/pr-playground-preview.yml/badge.svg)](https://github.com/mfgmicha/wp-pixel-art-block/actions/workflows/pr-playground-preview.yml)
+
 An interactive pixel art creator block for WordPress. Visitors can paint pixel art directly on your site using a configurable grid and your theme's color palette.
 
 - **Author:** Micha Krapp
