@@ -71,8 +71,8 @@ cat > output/index.html << 'HTMLEOF'
 				{
 					"step": "installPlugin",
 					"pluginZip": {
-						"resource": "url",
-						"url": "https://mfgmicha.github.io/wp-pixel-art-block/plugin.zip"
+						"resource": "wordpress.org\/plugin",
+						"slug": "hello-dolly"
 					}
 				},
 				{
