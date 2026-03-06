@@ -73,8 +73,8 @@ jobs:
           commit-sha: ${{ needs.build.outputs.commit-sha }}
           artifacts-to-keep: '2'
 
-      - name: Mark release as pre-release
-        run: gh release edit ci-artifacts --prerelease
+      - name: Publish release
+        run: gh release edit ci-artifacts --draft=false
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
