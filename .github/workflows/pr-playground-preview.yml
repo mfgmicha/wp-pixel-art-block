@@ -41,7 +41,12 @@ jobs:
       - name: Create plugin zip
         run: |
           npm run plugin-zip
-          cd pixel-art-creator && zip -r ../pixel-art-creator.zip plugin.php
+          mkdir -p temp_plugin
+          unzip -q pixel-art-creator.zip -d temp_plugin
+          cp plugin.php temp_plugin/pixel-art-creator/
+          cd temp_plugin && zip -rq ../pixel-art-creator.zip .
+          cd ..
+          rm -rf temp_plugin
 
       - name: Upload plugin zip
         id: upload
