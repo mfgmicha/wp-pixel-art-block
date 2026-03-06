@@ -38,7 +38,7 @@
 		},
 		{
 			"step": "runPHP",
-			"code": "<?php\nrequire '/wordpress/wp-load.php';\n$settings = array(\n    'destination_url' => 'relative',\n    'relative_path' => '/wp-pixel-art-block',\n    'additional_urls' => array(),\n    'exclude_urls' => array(\n        site_url( '/wp-admin/' ),\n        site_url( '/wp-login.php' ),\n    ),\n    'include_extras' => array( 'wp-css', 'wp-js' ),\n    'force_inline_css' => true,\n);\n$simply_static = \\Simply_Static\\Options::instance();\nforeach ( $settings as $key => $value ) {\n    $simply_static->set( $key, $value );\n}\n$simply_static->save();\nexport_static_site( '/output/export.zip' );"
+			"code": "<?php require '/wordpress/wp-load.php'; export_static_site( '/output/export.zip' );"
 		}
 	]
 }
