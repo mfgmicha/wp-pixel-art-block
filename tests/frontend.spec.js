@@ -105,12 +105,9 @@ test.describe('Frontend Pixel Art Block', () => {
                 await swatches.first().click();
             }
 
-            // Get the first cell
+            // Get the first cell and click to paint
             const firstCell = page.locator('.pixel-art-creator-grid__cell').first();
-
-            // Use mousedown + mouseup to trigger paint action
-            await firstCell.dispatchEvent('mousedown');
-            await firstCell.dispatchEvent('mouseup');
+            await firstCell.click();
             await page.waitForTimeout(200);
 
             // Verify cell now has a background color (not empty)
@@ -176,9 +173,8 @@ test.describe('Frontend Pixel Art Block', () => {
                 await swatches.first().click();
             }
 
-            // Paint the cell using mousedown + mouseup
-            await cell.dispatchEvent('mousedown');
-            await cell.dispatchEvent('mouseup');
+            // Paint the cell using click
+            await cell.click();
             await page.waitForTimeout(100);
 
             let cellColor = await cell.getAttribute('data-cell-color');
@@ -187,8 +183,7 @@ test.describe('Frontend Pixel Art Block', () => {
             // Select a different color and paint again
             if (await swatches.count() > 1) {
                 await swatches.nth(1).click();
-                await cell.dispatchEvent('mousedown');
-                await cell.dispatchEvent('mouseup');
+                await cell.click();
                 await page.waitForTimeout(100);
 
                 cellColor = await cell.getAttribute('data-cell-color');
@@ -215,14 +210,11 @@ test.describe('Frontend Pixel Art Block', () => {
                 await swatches.first().click();
             }
 
-            // Paint multiple cells using mousedown + mouseup
+            // Paint multiple cells using click
             const cells = page.locator('.pixel-art-creator-grid__cell');
-            await cells.nth(0).dispatchEvent('mousedown');
-            await cells.nth(0).dispatchEvent('mouseup');
-            await cells.nth(1).dispatchEvent('mousedown');
-            await cells.nth(1).dispatchEvent('mouseup');
-            await cells.nth(2).dispatchEvent('mousedown');
-            await cells.nth(2).dispatchEvent('mouseup');
+            await cells.nth(0).click();
+            await cells.nth(1).click();
+            await cells.nth(2).click();
             await page.waitForTimeout(100);
 
             // Verify cells are painted
@@ -257,10 +249,9 @@ test.describe('Frontend Pixel Art Block', () => {
                 await swatches.first().click();
             }
 
-            // Get the first cell and paint it
+            // Get the first cell and paint it using click
             const firstCell = page.locator('.pixel-art-creator-grid__cell').first();
-            await firstCell.dispatchEvent('mousedown');
-            await firstCell.dispatchEvent('mouseup');
+            await firstCell.click();
             await page.waitForTimeout(100);
 
             // Check localStorage was updated
@@ -285,10 +276,9 @@ test.describe('Frontend Pixel Art Block', () => {
             // Get first cell color to paint with
             const firstSwatchColor = await swatches.first().evaluate(el => el.getAttribute('data-swatch-color'));
 
-            // Paint first cell using mousedown + mouseup
+            // Paint first cell using click
             const firstCell = page.locator('.pixel-art-creator-grid__cell').first();
-            await firstCell.dispatchEvent('mousedown');
-            await firstCell.dispatchEvent('mouseup');
+            await firstCell.click();
             await page.waitForTimeout(100);
 
             // Reload the page
@@ -311,8 +301,7 @@ test.describe('Frontend Pixel Art Block', () => {
             }
 
             const firstCell = page.locator('.pixel-art-creator-grid__cell').first();
-            await firstCell.dispatchEvent('mousedown');
-            await firstCell.dispatchEvent('mouseup');
+            await firstCell.click();
             await page.waitForTimeout(100);
 
             // Verify localStorage has data
@@ -352,9 +341,8 @@ test.describe('Frontend Pixel Art Block', () => {
             await swatches.first().click();
             await page.waitForTimeout(100);
 
-            // Step 2: Paint first cell using mousedown + mouseup
-            await cells.nth(0).dispatchEvent('mousedown');
-            await cells.nth(0).dispatchEvent('mouseup');
+            // Step 2: Paint first cell using click
+            await cells.nth(0).click();
             await page.waitForTimeout(100);
 
             let cellColor = await cells.nth(0).getAttribute('data-cell-color');
@@ -365,9 +353,8 @@ test.describe('Frontend Pixel Art Block', () => {
                 await swatches.nth(1).click();
                 await page.waitForTimeout(100);
 
-                // Step 4: Paint second cell with different color using mousedown + mouseup
-                await cells.nth(1).dispatchEvent('mousedown');
-                await cells.nth(1).dispatchEvent('mouseup');
+                // Step 4: Paint second cell with different color using click
+                await cells.nth(1).click();
                 await page.waitForTimeout(100);
 
                 const cellColor2 = await cells.nth(1).getAttribute('data-cell-color');
