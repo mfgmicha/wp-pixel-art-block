@@ -120,6 +120,14 @@ npm run plugin-zip # Create plugin zip
 npm run makepot    # Generate translation template
 ```
 
+### Git Commands
+
+```bash
+git add .                     # Stage all changes
+git commit -m "type: message" # Commit with conventional message
+git push                     # Push to remote
+```
+
 ## Testing Notes
 
 - Tests run against a live WordPress instance via Playwright
