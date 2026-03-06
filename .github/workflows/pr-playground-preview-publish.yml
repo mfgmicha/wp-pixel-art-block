@@ -70,14 +70,11 @@ jobs:
             steps: [
               {
                 step: "installPlugin",
-                pluginZipFile: {
+                pluginData: {
                   resource: "url",
                   url,
                 },
-              },
-              {
-                step: "activatePlugin",
-                pluginPath: "pixel-art-creator/plugin.php"
+                options: { activate: true }
               },
               {
                 step: "wp-cli",
