@@ -24,14 +24,12 @@ cat > output/blueprint.json << 'EOF'
 			"step": "installPlugin",
 			"pluginZip": {
 				"resource": "url",
-				"url": "plugin.zip"
+				"url": "https://mfgmicha.github.io/wp-pixel-art-block/plugin.zip"
 			}
 		},
 		{
-			"step": "createPage",
-			"title": "Pixel Art Demo",
-			"content": "<!-- wp:mfgmicha/pixel-art-creator /-->",
-			"status": "publish"
+			"step": "wp-cli",
+			"command": "wp post create --post_type=page --post_title='Pixel Art Demo' --post_name='pixel-art' --post_content='<!-- wp:mfgmicha/pixel-art-creator /-->' --post_status=publish"
 		}
 	]
 }
