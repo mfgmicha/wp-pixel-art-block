@@ -42,10 +42,20 @@ wp-pixel-art-block/
 ### Development
 
 ```bash
-npm run start      # Dev server with hot reload (experimental modules)
-npm run build      # Production build
-npm run playground # Start local WordPress Playground
+npm run build        # Build plugin files first (required)
+npm run dev          # Start local WordPress Playground server (port 4218)
 ```
+
+### Local Server for Playwright MCP
+
+For agentic testing via Playwright MCP:
+
+1. Run `npm run build` first to build the plugin
+2. Run `npm run dev` to start the WordPress Playground server
+3. Server runs at `http://localhost:4218`
+4. Login credentials: `admin` / `password`
+
+The dev server persists and can be used while developing or running MCP tests.
 
 ### Testing
 
