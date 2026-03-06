@@ -83,11 +83,12 @@ The `.wordpress/blueprint.json` file configures the WordPress Playground:
 
 The repository includes GitHub Actions that automatically create WordPress Playground previews for every PR:
 
-- **Preview workflow** (`.github/workflows/pr-playground-preview.yml`): Builds the plugin, creates a ZIP, exposes it publicly, and adds a preview button to the PR
+1. **Build workflow** (`.github/workflows/pr-playground-preview-build.yml`): Builds the plugin and creates a ZIP
+2. **Publish workflow** (`.github/workflows/pr-playground-preview-publish.yml`): Exposes the ZIP and adds a preview button to the PR
 
 On PR open/update:
-1. The workflow builds the plugin and creates a ZIP
-2. The ZIP is exposed via a public URL
+1. The build workflow runs and uploads the plugin ZIP as an artifact
+2. The publish workflow runs after build completes
 3. A "Preview" button appears in the PR description that launches the Playground with the plugin installed
 
 The PR author and reviewers can click the preview button to test the changes in a real WordPress environment before merging.
