@@ -33,21 +33,12 @@
 			"pluginPath": "simply-static/simply-static.php"
 		},
 		{
-			"step": "mkdir",
-			"path": "/wordpress/wp-content/plugins/export-static-site"
-		},
-		{
-			"step": "writeFile",
-			"path": "/wordpress/wp-content/plugins/export-static-site/export-static-site.php",
-			"data": "<?php\n/*\nPlugin Name: Export Static Site\nDescription: Exposes export_static_site function for Simply Static\nVersion: 0.1\n*/\n\nfunction export_static_site($output_file) {\n    $simply_static = Simply_Static\\Plugin::instance();\n    $simply_static->run_static_export();\n\n    $i = 0;\n    do {\n        $exports = glob(WP_CONTENT_DIR . '/uploads/simply-static/temp-files/*.zip');\n        sleep(1);\n    } while (empty($exports) && ++$i < 300);\n\n    if (empty($exports)) {\n        throw new Exception(\"The export wasn't finished in five minutes, aborting.\");\n    }\n\n    $export = end($exports);\n    rename($export, $output_file);\n}\n"
-		},
-		{
 			"step": "activatePlugin",
 			"pluginPath": "export-static-site/export-static-site.php"
 		},
 		{
 			"step": "runPHP",
-			"code": "<?php\nrequire '/wordpress/wp-load.php';\n\n$settings = array(\n    'destination_url' => 'relative',\n    'relative_path' => '/wp-pixel-art-block',\n    'additional_urls' => array(),\n    'exclude_urls' => array(\n        site_url( '/wp-admin/' ),\n        site_url( '/wp-login.php' ),\n    ),\n    'include_extras' => array( 'wp-css', 'wp-js' ),\n    'force_inline_css' => true,\n);\n\n$simply_static = \\Simply_Static\\Options::instance();\nforeach ( $settings as $key => $value ) {\n    $simply_static->set( $key, $value );\n}\n$simply_static->save();\n\nexport_static_site( '/output/export.zip' );"
+			"code": "<?php\nrequire '/wordpress/wp-load.php';\n$settings = array(\n    'destination_url' => 'relative',\n    'relative_path' => '/wp-pixel-art-block',\n    'additional_urls' => array(),\n    'exclude_urls' => array(\n        site_url( '/wp-admin/' ),\n        site_url( '/wp-login.php' ),\n    ),\n    'include_extras' => array( 'wp-css', 'wp-js' ),\n    'force_inline_css' => true,\n);\n$simply_static = \\Simply_Static\\Options::instance();\nforeach ( $settings as $key => $value ) {\n    $simply_static->set( $key, $value );\n}\n$simply_static->save();\nexport_static_site( '/output/export.zip' );"
 		}
 	]
 }
