@@ -29,9 +29,6 @@ jobs:
       - name: Create plugin zip
         run: npm run plugin-zip
 
-      - name: Rename plugin zip
-        run: mv @mfgmicha/pixel-art-creator.zip pixel-art-creator.zip
-
       - name: Upload plugin zip
         uses: actions/upload-artifact@v4
         with:

@@ -1,5 +1,5 @@
 {
-	"name": "@mfgmicha/pixel-art-creator",
+	"name": "pixel-art-creator",
 	"version": "0.3.0",
 	"description": "An interactive pixel art grid. Visitors paint with your theme's color palette on a configurable grid.",
 	"author": "Micha Krapp",

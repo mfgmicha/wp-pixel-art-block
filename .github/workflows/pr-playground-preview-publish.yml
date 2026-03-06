@@ -77,7 +77,7 @@ jobs:
               },
               {
                 step: "activatePlugin",
-                pluginPath: "wp-pixel-art-block/plugin.php"
+                pluginPath: "pixel-art-creator/plugin.php"
               },
               {
                 step: "wp-cli",
