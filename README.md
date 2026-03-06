@@ -19,7 +19,8 @@ Pixel Art Creator brings creative fun to your WordPress site. Place the block on
 * Configurable grid size — set columns and rows between 4 and 32 via the block sidebar
 * Automatically uses your theme's color palette for a consistent look
 * Click a color, then click grid cells to paint them
-* Click a painted cell with the same color to erase it back to white
+* Drag to paint multiple cells at once
+* Select white and click to erase
 * One-click Reset button clears the entire canvas
 * Fully responsive — the grid scrolls horizontally on small screens
 * Pure client-side interaction — no data is saved or sent to a server
