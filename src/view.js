@@ -26,7 +26,8 @@ const getBlockId = ( wrapper ) => {
 
 // Helper to get localStorage key for this block.
 const getStorageKey = ( blockId ) => {
-	return `pixel-art-${ blockId }`;
+	const siteId = window.location.pathname.replace( /\//g, '-' ) || 'root';
+	return `pixel-art-${ siteId }-${ blockId }`;
 };
 
 // Helper to save grid to localStorage.
