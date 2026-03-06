@@ -56,7 +56,7 @@ npm run test:ci
 Uses programmatic WordPress Playground - server starts/stops automatically.
 
 ```bash
-npm run test:local
+npm test
 ```
 
 Note: ES modules have known limitations locally (use cloud tests for full coverage).
@@ -64,6 +64,20 @@ Note: ES modules have known limitations locally (use cloud tests for full covera
 ### Automated PR Previews
 
 Every PR automatically gets a WordPress Playground preview via GitHub Actions. The plugin is built and deployed to a temporary URL where you can test changes before merging.
+
+### Local Development
+
+To run a local WordPress server for development or Playwright MCP testing:
+
+```bash
+npm run build        # Build plugin files first (required)
+npm run dev          # Start local WordPress Playground server
+```
+
+- Server URL: `http://localhost:4218`
+- Login credentials: `admin` / `password`
+
+The dev server persists and can be used while developing or running agentic tests via Playwright MCP.
 
 ## Installation
 
