@@ -7,10 +7,37 @@ echo "Cleaning output directory..."
 rm -rf output
 mkdir -p output
 
-PLUGIN_ZIP_URL="https://raw.githubusercontent.com/$GITHUB_REPOSITORY/$GITHUB_SHA/pixel-art-creator.zip"
+echo "Copying plugin zip to output directory..."
+cp pixel-art-creator.zip output/plugin.zip
+
+echo "Creating blueprint JSON..."
+cat > output/blueprint.json << 'EOF'
+{
+	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
+	"preferredVersions": {
+		"wp": "latest",
+		"php": "8.4"
+	},
+	"steps": [
+		{
+			"step": "installPlugin",
+			"pluginZip": {
+				"resource": "url",
+				"url": "plugin.zip"
+			}
+		},
+		{
+			"step": "createPage",
+			"title": "Pixel Art Demo",
+			"content": "<!-- wp:mfgmicha/pixel-art-creator /-->",
+			"status": "publish"
+		}
+	]
+}
+EOF
 
 echo "Creating HTML with embedded WordPress Playground..."
-cat > output/index.html << HTMLEOF
+cat > output/index.html << 'HTMLEOF'
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -60,39 +87,16 @@ cat > output/index.html << HTMLEOF
 	<script type="module">
 		const iframe = document.getElementById('playground');
 		
-		const blueprint = {
-			"$schema": "https://playground.wordpress.net/blueprint-schema.json",
-			"preferredVersions": {
-				"wp": "latest",
-				"php": "8.4"
-			},
-			"steps": [
-				{
-					"step": "installPlugin",
-					"pluginZip": {
-						"resource": "url",
-						"url": "https://mfgmicha.github.io/wp-pixel-art-block/plugin.zip"
-					}
-				},
-				{
-					"step": "createPage",
-					"title": "Pixel Art Demo",
-					"content": "<!-- wp:mfgmicha/pixel-art-creator /-->",
-					"status": "publish"
-				}
-			]
-		};
-
-		const playgroundUrl = new URL('https://playground.wordpress.net/embed/');
-		playgroundUrl.searchParams.set('blueprint', JSON.stringify(blueprint));
+		const playgroundUrl = new URL('https://playground.wordpress.net/');
+		playgroundUrl.searchParams.set('mode', 'raw');
+		playgroundUrl.searchParams.set('url', '/');
+		playgroundUrl.searchParams.set('blueprintUrl', './blueprint.json');
+		
 		iframe.src = playgroundUrl.toString();
 	</script>
 </body>
 </html>
 HTMLEOF
-
-echo "Copying plugin zip to output directory..."
-cp pixel-art-creator.zip output/plugin.zip
 
 echo "Checking for index.html..."
 ls -la output/
