@@ -68,7 +68,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mv pixel-art-creator.zip pixel-art-creator-pr${{ needs.build.outputs.pr-number }}-${{ needs.build.outputs.commit-sha }}.zip
-          gh release upload ci-artifacts pixel-art-creator-pr${{ needs.build.outputs.pr-number }}-${{ needs.build.outputs.commit-sha }}.zip --force
+          gh release upload ci-artifacts pixel-art-creator-pr${{ needs.build.outputs.pr-number }}-${{ needs.build.outputs.commit-sha }}.zip --clobber
 
       - name: Publish release
         run: gh release edit ci-artifacts --draft=false
