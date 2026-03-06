@@ -1,46 +1,59 @@
-name: PR Playground Preview
+name: PR Playground Preview - Publish
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened, edited]
+  workflow_run:
+    workflows: ["PR Playground Preview - Build"]
+    types:
+      - completed
 
 permissions:
   contents: write
   pull-requests: write
 
 jobs:
-  build-and-preview:
+  publish-preview:
     runs-on: ubuntu-latest
+    if: >
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success'
+    outputs:
+      artifact-url: ${{ steps.expose.outputs.artifact-url }}
+      artifact-name: ${{ steps.expose.outputs.artifact-name }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Extract PR metadata from artifact name
+        id: pr-metadata
+        uses: actions/github-script@v7
         with:
-          persist-credentials: false
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build Plugin
-        run: npm run build
-
-      - name: Create plugin zip
-        run: npm run plugin-zip
-
-      - name: Rename plugin zip
-        run: mv @mfgmicha/pixel-art-creator.zip pixel-art-creator.zip
+          script: |
+            const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: ${{ github.event.workflow_run.id }},
+            });
+            const artifact = artifacts.data.artifacts.find(a =>
+              a.name.startsWith("pixel-art-plugin-zip-pr")
+            );
+            if (!artifact) {
+              throw new Error('Could not find plugin artifact');
+            }
+            const match = artifact.name.match(/^pixel-art-plugin-zip-pr(\d+)-(.+)$/);
+            if (!match) {
+              throw new Error(`Could not parse artifact name: ${artifact.name}`);
+            }
+            const [, prNumber, commitSha] = match;
+            core.setOutput('pr-number', prNumber);
+            core.setOutput('commit-sha', commitSha);
+            core.setOutput('artifact-name', artifact.name);
 
       - name: Expose built artifact
         id: expose
         uses: WordPress/action-wp-playground-pr-preview/.github/actions/expose-artifact-on-public-url@v2
         with:
-          artifact-name: pixel-art-plugin-zip-pr${{ github.event.pull_request.number }}-${{ github.event.pull_request.head.sha }}
+          artifact-name: ${{ steps.pr-metadata.outputs.artifact-name }}
           artifact-filename: pixel-art-creator.zip
-          pr-number: ${{ github.event.pull_request.number }}
-          commit-sha: ${{ github.event.pull_request.head.sha }}
+          pr-number: ${{ steps.pr-metadata.outputs.pr-number }}
+          commit-sha: ${{ steps.pr-metadata.outputs.commit-sha }}
+          artifact-source-run-id: ${{ github.event.workflow_run.id }}
           artifacts-to-keep: '2'
 
       - name: Generate Playground blueprint JSON
@@ -82,5 +95,5 @@ jobs:
         with:
           mode: append-to-description
           blueprint: ${{ steps.blueprint.outputs.blueprint }}
-          pr-number: ${{ github.event.pull_request.number }}
+          pr-number: ${{ steps.pr-metadata.outputs.pr-number }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
