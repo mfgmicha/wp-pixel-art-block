@@ -4,3 +4,4 @@ node_modules
 /tests/screenshots
 @mfgmicha/pixel-art-creator.zip
 pixel-art-creator.zip
+/output

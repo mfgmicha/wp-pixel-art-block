@@ -21,7 +21,12 @@ const getBlockId = ( wrapper ) => {
 		return blockIdAttr;
 	}
 	// Fallback: generate a unique ID based on wrapper position
-	return 'block-' + Array.from( document.querySelectorAll( '.wp-block-mfgmicha-pixel-art-creator' ) ).indexOf( wrapper );
+	return (
+		'block-' +
+		Array.from(
+			document.querySelectorAll( '.wp-block-mfgmicha-pixel-art-creator' )
+		).indexOf( wrapper )
+	);
 };
 
 // Helper to get localStorage key for this block.
@@ -32,7 +37,9 @@ const getStorageKey = ( blockId ) => {
 
 // Helper to save grid to localStorage.
 const saveToStorage = ( blockId ) => {
-	const wrapper = document.querySelector( `.wp-block-mfgmicha-pixel-art-creator[data-block-id="${ blockId }"]` );
+	const wrapper = document.querySelector(
+		`.wp-block-mfgmicha-pixel-art-creator[data-block-id="${ blockId }"]`
+	);
 	if ( ! wrapper ) {
 		return;
 	}
@@ -45,7 +52,10 @@ const saveToStorage = ( blockId ) => {
 		}
 	} );
 	try {
-		localStorage.setItem( getStorageKey( blockId ), JSON.stringify( gridData ) );
+		localStorage.setItem(
+			getStorageKey( blockId ),
+			JSON.stringify( gridData )
+		);
 	} catch ( e ) {
 		console.warn( 'Could not save to localStorage:', e );
 	}
@@ -59,11 +69,15 @@ const loadFromStorage = ( blockId ) => {
 			return;
 		}
 		const gridData = JSON.parse( saved );
-		const wrapper = document.querySelector( `.wp-block-mfgmicha-pixel-art-creator[data-block-id="${ blockId }"]` );
+		const wrapper = document.querySelector(
+			`.wp-block-mfgmicha-pixel-art-creator[data-block-id="${ blockId }"]`
+		);
 		if ( ! wrapper ) {
 			return;
 		}
-		const cells = wrapper.querySelectorAll( '.pixel-art-creator-grid__cell' );
+		const cells = wrapper.querySelectorAll(
+			'.pixel-art-creator-grid__cell'
+		);
 		cells.forEach( ( cell, index ) => {
 			if ( gridData[ index ] ) {
 				cell.style.backgroundColor = gridData[ index ];
@@ -79,13 +93,18 @@ const { state } = store( 'mfgmicha/pixel-art-creator', {
 	state: {
 		get activeColor() {
 			// Return the selected color from state, or default to first color
-			return state.selectedColor || state.colors?.[ 0 ]?.color || '#000000';
+			return (
+				state.selectedColor || state.colors?.[ 0 ]?.color || '#000000'
+			);
 		},
 		get isActiveSwatch() {
 			const ctx = getContext();
 			const swatchColor = ctx.item?.color;
-			return swatchColor && state.activeColor &&
-				swatchColor.toLowerCase() === state.activeColor.toLowerCase();
+			return (
+				swatchColor &&
+				state.activeColor &&
+				swatchColor.toLowerCase() === state.activeColor.toLowerCase()
+			);
 		},
 		// Drag state
 		isDragging: false,
@@ -112,7 +131,9 @@ const { state } = store( 'mfgmicha/pixel-art-creator', {
 			ref.style.backgroundColor = state.activeColor;
 			ref.setAttribute( 'data-cell-color', state.activeColor );
 			// Save to localStorage
-			const wrapper = ref.closest( '.wp-block-mfgmicha-pixel-art-creator' );
+			const wrapper = ref.closest(
+				'.wp-block-mfgmicha-pixel-art-creator'
+			);
 			const blockId = wrapper ? getBlockId( wrapper ) : null;
 			if ( blockId ) {
 				saveToStorage( blockId );
@@ -121,7 +142,7 @@ const { state } = store( 'mfgmicha/pixel-art-creator', {
 			state.isDragging = true;
 			// Set justPainted if this was an empty cell
 			const currentColor = ref.getAttribute( 'data-cell-color' ) || '';
-			state.justPainted = ( currentColor === state.activeColor );
+			state.justPainted = currentColor === state.activeColor;
 		},
 		// Continue drag: paints cell if dragging
 		dragPaint() {
@@ -137,7 +158,9 @@ const { state } = store( 'mfgmicha/pixel-art-creator', {
 			ref.setAttribute( 'data-cell-color', state.activeColor );
 			state.justPainted = false; // Clear the flag since we're now dragging
 			// Save to localStorage
-			const wrapper = ref.closest( '.wp-block-mfgmicha-pixel-art-creator' );
+			const wrapper = ref.closest(
+				'.wp-block-mfgmicha-pixel-art-creator'
+			);
 			const blockId = wrapper ? getBlockId( wrapper ) : null;
 			if ( blockId ) {
 				saveToStorage( blockId );
@@ -163,7 +186,10 @@ const { state } = store( 'mfgmicha/pixel-art-creator', {
 				return;
 			}
 			const current = ref.getAttribute( 'data-cell-color' ) || '';
-			if ( current && current.toLowerCase() === state.activeColor.toLowerCase() ) {
+			if (
+				current &&
+				current.toLowerCase() === state.activeColor.toLowerCase()
+			) {
 				ref.style.backgroundColor = '#fff';
 				ref.setAttribute( 'data-cell-color', '' );
 			} else {
@@ -171,7 +197,9 @@ const { state } = store( 'mfgmicha/pixel-art-creator', {
 				ref.setAttribute( 'data-cell-color', state.activeColor );
 			}
 			// Save to localStorage after painting.
-			const wrapper = ref.closest( '.wp-block-mfgmicha-pixel-art-creator' );
+			const wrapper = ref.closest(
+				'.wp-block-mfgmicha-pixel-art-creator'
+			);
 			const blockId = wrapper ? getBlockId( wrapper ) : null;
 			if ( blockId ) {
 				saveToStorage( blockId );
@@ -185,7 +213,10 @@ const { state } = store( 'mfgmicha/pixel-art-creator', {
 					return;
 				}
 				const current = ref.getAttribute( 'data-cell-color' ) || '';
-				if ( current && current.toLowerCase() === state.activeColor.toLowerCase() ) {
+				if (
+					current &&
+					current.toLowerCase() === state.activeColor.toLowerCase()
+				) {
 					ref.style.backgroundColor = '#fff';
 					ref.setAttribute( 'data-cell-color', '' );
 				} else {
@@ -193,7 +224,9 @@ const { state } = store( 'mfgmicha/pixel-art-creator', {
 					ref.setAttribute( 'data-cell-color', state.activeColor );
 				}
 				// Save to localStorage after painting.
-				const wrapper = ref.closest( '.wp-block-mfgmicha-pixel-art-creator' );
+				const wrapper = ref.closest(
+					'.wp-block-mfgmicha-pixel-art-creator'
+				);
 				const blockId = wrapper ? getBlockId( wrapper ) : null;
 				if ( blockId ) {
 					saveToStorage( blockId );
@@ -205,12 +238,16 @@ const { state } = store( 'mfgmicha/pixel-art-creator', {
 			if ( ! ref ) {
 				return;
 			}
-			const wrapper = ref.closest( '.wp-block-mfgmicha-pixel-art-creator' );
+			const wrapper = ref.closest(
+				'.wp-block-mfgmicha-pixel-art-creator'
+			);
 			if ( ! wrapper ) {
 				return;
 			}
 			const blockId = getBlockId( wrapper );
-			const cells = wrapper.querySelectorAll( '.pixel-art-creator-grid__cell' );
+			const cells = wrapper.querySelectorAll(
+				'.pixel-art-creator-grid__cell'
+			);
 			for ( let i = 0; i < cells.length; i++ ) {
 				cells[ i ].style.backgroundColor = '#fff';
 				cells[ i ].setAttribute( 'data-cell-color', '' );
@@ -228,7 +265,9 @@ const { state } = store( 'mfgmicha/pixel-art-creator', {
 // Initialize: Add block ID to wrapper and load saved data.
 // Drag-to-paint is now handled by Interactivity API directives.
 document.addEventListener( 'DOMContentLoaded', () => {
-	const wrapper = document.querySelector( '.wp-block-mfgmicha-pixel-art-creator' );
+	const wrapper = document.querySelector(
+		'.wp-block-mfgmicha-pixel-art-creator'
+	);
 	if ( ! wrapper ) {
 		return;
 	}

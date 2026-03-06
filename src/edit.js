@@ -126,7 +126,10 @@ export default function Edit( { attributes, setAttributes } ) {
 						</svg>
 						<div className="pixel-art-creator-editor__text">
 							<strong>
-								{ __( 'Pixel Art Creator', 'pixel-art-creator' ) }
+								{ __(
+									'Pixel Art Creator',
+									'pixel-art-creator'
+								) }
 							</strong>
 							<span>
 								{ columns }{ ' ' }
