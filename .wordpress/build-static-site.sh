@@ -14,6 +14,7 @@ echo "Creating blueprint JSON..."
 cat > output/blueprint.json << 'EOF'
 {
 	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
+	"landingPage": "/pixel-art/",
 	"preferredVersions": {
 		"wp": "latest",
 		"php": "8.4"
@@ -88,8 +89,6 @@ cat > output/index.html << 'HTMLEOF'
 		const iframe = document.getElementById('playground');
 		
 		const playgroundUrl = new URL('https://playground.wordpress.net/');
-		playgroundUrl.searchParams.set('mode', 'raw');
-		playgroundUrl.searchParams.set('url', '/');
 		playgroundUrl.searchParams.set('blueprintUrl', './blueprint.json');
 		
 		iframe.src = playgroundUrl.toString();
