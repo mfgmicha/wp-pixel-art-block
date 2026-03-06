@@ -1,0 +1,46 @@
+{
+	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
+	"landingPage": "/wp-pixel-art-block/",
+	"preferredVersions": {
+		"wp": "latest",
+		"php": "8.4"
+	},
+	"steps": [
+		{
+			"step": "defineWpConfigConsts",
+			"consts": {
+				"SIMPLY_STATIC_DESTINATION_URL_TYPE": "relative",
+				"SIMPLY_STATIC_RELATIVE_PATH": "/wp-pixel-art-block"
+			}
+		},
+		{
+			"step": "installPlugin",
+			"pluginZipFile": {
+				"resource": "url",
+				"url": "file:///plugin.zip"
+			},
+			"options": {
+				"activate": true
+			}
+		},
+		{
+			"step": "wp-cli",
+			"command": "wp post create --post_type=page --post_title='Pixel Art Demo' --post_name='pixel-art' --post_content='<!-- wp:mfgmicha/pixel-art-creator /-->' --post_status=publish"
+		},
+		{
+			"step": "installPlugin",
+			"pluginZipFile": {
+				"resource": "wordpress.org/plugins",
+				"slug": "simply-static"
+			}
+		},
+		{
+			"step": "activatePlugin",
+			"pluginPath": "simply-static/simply-static.php"
+		},
+		{
+			"step": "runPHP",
+			"code": "<?php\nrequire '/wordpress/wp-load.php';\n\n$settings = array(\n    'destination_url' => 'relative',\n    'relative_path' => '/wp-pixel-art-block',\n    'additional_urls' => array(),\n    'exclude_urls' => array(\n        site_url( '/wp-admin/' ),\n        site_url( '/wp-login.php' ),\n    ),\n    'include_extras' => array( 'wp-css', 'wp-js' ),\n    'force_inline_css' => true,\n);\n\n$simply_static = \\Simply_Static\\Options::instance();\nforeach ( $settings as $key => $value ) {\n    $simply_static->set( $key, $value );\n}\n$simply_static->save();\n\nexport_static_site( '/output/export.zip' );"
+		}
+	]
+}
