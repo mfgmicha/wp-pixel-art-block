@@ -13,15 +13,15 @@ function export_static_site($output_file)
     $simply_static = Simply_Static\Plugin::instance();
     $simply_static->run_static_export();
 
-    // Wait at most 5 minutes for the export to finish
+    // Wait at most 10 minutes for the export to finish
     $i = 0;
     do {
         $exports = glob(WP_CONTENT_DIR . '/uploads/simply-static/temp-files/*.zip');
         sleep(1);
-    } while (empty($exports) && ++$i < 300);
+    } while (empty($exports) && ++$i < 600);
 
     if (empty($exports)) {
-        throw new Exception("The export wasn't finished in five minutes, aborting.");
+        throw new Exception("The export wasn't finished in ten minutes, aborting.");
     }
     
     $export = end($exports);
