@@ -29,6 +29,8 @@ jobs:
         with:
           path: ~/.cache/ms-playwright
           key: playwright-browsers-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            playwright-browsers-${{ runner.os }}-
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
