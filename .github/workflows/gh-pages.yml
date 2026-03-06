@@ -21,48 +21,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Cache npm packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-npm-
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build plugin
-        run: npm run build
-
-      - name: Create plugin zip
-        run: |
-          npm run plugin-zip
-          mkdir -p temp_plugin
-          unzip -q pixel-art-creator.zip -d temp_plugin
-          cp plugin.php temp_plugin/pixel-art-creator/
-          cd temp_plugin && zip -rq ../pixel-art-creator.zip .
-          cd ..
-          rm -rf temp_plugin
-
-      - name: Install bun
-        run: curl -fsSL https://bun.sh/install | bash
-
-      - name: Generate static site
-        run: PATH="${PATH}:${HOME}/.bun/bin" bash .wordpress/build-static-site.sh
-
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './output'
+          path: './.wordpress'
 
   deploy:
     needs: build
