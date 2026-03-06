@@ -10,6 +10,8 @@ License: GPL2
 
 function export_static_site($output_file)
 {
+    error_log("Starting static export...");
+    
     $simply_static = Simply_Static\Plugin::instance();
     $simply_static->run_static_export();
 
@@ -17,6 +19,7 @@ function export_static_site($output_file)
     $i = 0;
     do {
         $exports = glob(WP_CONTENT_DIR . '/uploads/simply-static/temp-files/*.zip');
+        error_log("Waiting for export... iteration: $i, files found: " . count($exports));
         sleep(1);
     } while (empty($exports) && ++$i < 600);
 
@@ -25,5 +28,7 @@ function export_static_site($output_file)
     }
     
     $export = end($exports);
+    error_log("Export found: $export");
     rename($export, $output_file);
+    error_log("Export complete: $output_file");
 }
