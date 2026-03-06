@@ -16,23 +16,32 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: npm
+
+      - name: Cache npm
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: npm-shared-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            npm-shared-${{ runner.os }}-
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Build plugin
-        run: npm run build
-
       - name: Cache Playwright browsers
+        id: cache-playwright
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
-          key: playwright-browsers-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          key: playwright-shared-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
           restore-keys: |
-            playwright-browsers-${{ runner.os }}-
+            playwright-shared-${{ runner.os }}-
+
+      - name: Build plugin
+        run: npm run build
 
       - name: Install Playwright browsers
+        if: steps.cache-playwright.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps
 
       - name: Run tests

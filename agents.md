@@ -32,9 +32,15 @@ wp-pixel-art-block/
 │   ├── playground-setup.js
 │   ├── global-setup.js
 │   └── global-teardown.js
-├── .wordpress/            # WordPress Playground blueprint
+├── .github/               # GitHub Actions workflows
+│   └── workflows/
+│       ├── pr-playground-preview.yml
+│       └── pr-tests.yml
+├── .husky/               # Git hooks
+├── commitlint.config.js  # Commit message linting
+├── .wordpress/           # WordPress Playground blueprint
 ├── playwright.config.js
-└── plugin.php             # WordPress plugin entry
+└── plugin.php            # WordPress plugin entry
 ```
 
 ## Commands
@@ -93,11 +99,33 @@ npm run lint:css    # Lint CSS
 npm run lint:js     # Lint JavaScript
 ```
 
+### Conventional Commits
+
+This project uses Husky and Commitlint to enforce conventional commit messages.
+
+```
+<type>(<scope>): <subject>
+
+Types: feat, fix, docs, style, refactor, test, chore
+Examples:
+  feat: add new pixel art feature
+  fix: resolve playground preview issue
+  docs: update testing documentation
+```
+
 ### Other
 
 ```bash
 npm run plugin-zip # Create plugin zip
 npm run makepot    # Generate translation template
+```
+
+### Git Commands
+
+```bash
+git add .                     # Stage all changes
+git commit -m "type: message" # Commit with conventional message
+git push                     # Push to remote
 ```
 
 ## Testing Notes

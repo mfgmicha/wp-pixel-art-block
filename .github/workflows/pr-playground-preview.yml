@@ -1,0 +1,121 @@
+name: PR Playground Preview
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      artifact-name: ${{ steps.upload.outputs.artifact-name }}
+      pr-number: ${{ github.event.pull_request.number }}
+      commit-sha: ${{ github.event.pull_request.head.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Cache npm
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: npm-shared-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            npm-shared-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Plugin
+        run: npm run build
+
+      - name: Create plugin zip
+        run: |
+          npm run plugin-zip
+          mkdir -p temp_plugin
+          unzip -q pixel-art-creator.zip -d temp_plugin
+          cp plugin.php temp_plugin/pixel-art-creator/
+          cd temp_plugin && zip -rq ../pixel-art-creator.zip .
+          cd ..
+          rm -rf temp_plugin
+
+      - name: Upload plugin zip
+        id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: pixel-art-plugin-zip-pr${{ github.event.pull_request.number }}-${{ github.event.pull_request.head.sha }}
+          path: pixel-art-creator.zip
+          if-no-files-found: error
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Download plugin zip
+        uses: actions/download-artifact@v4
+        with:
+          name: pixel-art-plugin-zip-pr${{ needs.build.outputs.pr-number }}-${{ needs.build.outputs.commit-sha }}
+          path: .
+
+      - name: Upload to release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mv pixel-art-creator.zip pixel-art-creator-pr${{ needs.build.outputs.pr-number }}-${{ needs.build.outputs.commit-sha }}.zip
+          gh release upload ci-artifacts pixel-art-creator-pr${{ needs.build.outputs.pr-number }}-${{ needs.build.outputs.commit-sha }}.zip --clobber
+
+      - name: Publish release
+        run: gh release edit ci-artifacts --draft=false
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate Playground blueprint JSON
+        id: blueprint
+        run: |
+          node - <<'NODE' >> "$GITHUB_OUTPUT"
+          const prNumber = "${{ needs.build.outputs.pr-number }}";
+          const commitSha = "${{ needs.build.outputs.commit-sha }}";
+          const url = `https://github.com/mfgmicha/wp-pixel-art-block/releases/download/ci-artifacts/pixel-art-creator-pr${prNumber}-${commitSha}.zip`;
+          const blueprint = {
+            landingPage: "/pixel-art/",
+            preferredVersions: {wp: "latest", php: "8.4"},
+            steps: [
+              {
+                step: "installPlugin",
+                pluginData: {
+                  resource: "url",
+                  url,
+                },
+                options: { activate: true }
+              },
+              {
+                step: "wp-cli",
+                command: "wp post create --post_type=page --post_title=PixelArt --post_name=pixel-art --post_content='<!-- wp:mfgmicha/pixel-art-creator /-->' --post_status=publish"
+              },
+            ],
+          };
+          console.log(`blueprint=${JSON.stringify(blueprint)}`);
+          NODE
+        env:
+          ARTIFACT_URL: ${{ steps.expose.outputs.artifact-url }}
+
+      - name: Post Playground preview button
+        uses: WordPress/action-wp-playground-pr-preview@v2
+        with:
+          mode: append-to-description
+          blueprint: ${{ steps.blueprint.outputs.blueprint }}
+          pr-number: ${{ needs.build.outputs.pr-number }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}

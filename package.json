@@ -1,5 +1,5 @@
 {
-	"name": "@mfgmicha/pixel-art-creator",
+	"name": "pixel-art-creator",
 	"version": "0.3.0",
 	"description": "An interactive pixel art grid. Visitors paint with your theme's color palette on a configurable grid.",
 	"author": "Micha Krapp",
@@ -19,11 +19,15 @@
 		"test:cloud": "TEST_MODE=cloud npx playwright test",
 		"test:ci": "npm run build && npm run test:cloud",
 		"makepot": "make-pot src languages --slug=pixel-art-creator --domain=block --headers=email:michakrapp@gmail.com --headers=\"name:Pixel Art Creator\" --headers=\"version:0.3.0\" --headers=\"author:Micha Krapp\"",
-		"makejson": "make-json build languages --slug=pixel-art-creator"
+		"makejson": "make-json build languages --slug=pixel-art-creator",
+		"prepare": "husky"
 	},
 	"devDependencies": {
+		"@commitlint/cli": "^20.4.3",
+		"@commitlint/config-conventional": "^20.4.3",
 		"@wordpress/scripts": "^30.27.0",
 		"@wp-blocks/make-pot": "^1.6.6",
-		"@wp-playground/cli": "^3.1.3"
+		"@wp-playground/cli": "^3.1.3",
+		"husky": "^9.1.7"
 	}
 }
