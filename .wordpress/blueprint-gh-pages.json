@@ -14,14 +14,8 @@
 			}
 		},
 		{
-			"step": "installPlugin",
-			"pluginZipFile": {
-				"resource": "url",
-				"url": "file:///plugin.zip"
-			},
-			"options": {
-				"activate": true
-			}
+			"step": "wp-cli",
+			"command": "wp plugin install /plugin.zip --activate"
 		},
 		{
 			"step": "wp-cli",
