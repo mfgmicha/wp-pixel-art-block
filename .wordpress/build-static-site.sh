@@ -84,7 +84,7 @@ cat > output/index.html << 'HTMLEOF'
 			]
 		};
 
-		const playgroundUrl = new URL('https://playground.wordpress.net/embed/');
+		const playgroundUrl = new URL('https://playground.wordpress.net/');
 		playgroundUrl.searchParams.set('blueprint', JSON.stringify(blueprint));
 		
 		iframe.src = playgroundUrl.toString();
