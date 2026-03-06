@@ -69,6 +69,11 @@ jobs:
           commit-sha: ${{ needs.build.outputs.commit-sha }}
           artifacts-to-keep: '2'
 
+      - name: Mark release as pre-release
+        run: gh release edit ci-artifacts --prerelease
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Generate Playground blueprint JSON
         id: blueprint
         run: |
